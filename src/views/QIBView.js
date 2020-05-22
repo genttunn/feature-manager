@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import requests from "../utils/requests";
 import QIBFeatureTable from "../components/QIBFeatureTable";
+
 import {
   Container,
   Row,
@@ -10,7 +11,8 @@ import {
   Button,
   Dropdown,
   DropdownButton,
-  Form
+  Form,
+  InputGroup,
 } from "react-bootstrap";
 
 export default class QIBView extends Component {
@@ -21,7 +23,8 @@ export default class QIBView extends Component {
       qibs: [],
       qib_features: null,
       date: "",
-      featureSet: ""
+      featureSet: "",
+      current_qib: 0,
     };
   }
   componentDidMount = async () => {
@@ -31,9 +34,9 @@ export default class QIBView extends Component {
   fetchAlbums = async () => {
     let array = await requests.getAllAlbums();
     if (array && array.length > 0) {
-      // console.log("fetch album");
-      // console.log(array);
-      this.setState(prevState => {
+      console.log("fetch album");
+      console.log(array);
+      this.setState((prevState) => {
         return { ...this.state, albums: array };
       });
     }
@@ -43,18 +46,18 @@ export default class QIBView extends Component {
     if (array && array.length > 0) {
       // console.log("fetch qib");
       // console.log(array);
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return { ...this.state, qibs: array };
       });
     }
   };
-  fetchQIBByAlbum = async e => {
+  fetchQIBByAlbum = async (e) => {
     console.log(e);
     let array = await requests.getQIBByAlbum(e);
-    if (array && array.length > 0) {
+    if (array) {
       // console.log("fetch qib");
       // console.log(array);
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return { ...this.state, qibs: array };
       });
     }
@@ -63,22 +66,48 @@ export default class QIBView extends Component {
     const dateSince = this.state.date + " 12:00:00.0";
     console.log(dateSince);
     let array = await requests.getQIBByDate(dateSince);
-    if (array && array.length > 0) {
-      // console.log("fetch qib");
-      // console.log(array);
-      this.setState(prevState => {
+    if (array) {
+      console.log("fetch qib");
+      console.log(array);
+      this.setState((prevState) => {
         return { ...this.state, qibs: array };
       });
     }
   };
-  fetchQIBFeature = async e => {
-    let array = await requests.getQIBFeatureByQIB(e);
-    if (array && array.length > 0) {
-      this.setState(prevState => {
-        return { ...this.state, qib_features: array };
+  fetchQIBFeature = async (e) => {
+    let object = await requests.getQIBFeatureByQIB(e);
+    if (object && object.length > 0) {
+      this.setState((prevState) => {
+        return { ...this.state, qib_features: object, current_qib: e };
       });
     }
-    console.log(array);
+    console.log(object);
+  };
+  handleFeatureClick = (feature) => {
+    if (feature == "modality" || feature == "label") {
+      return;
+    } else {
+      this.setState((prevState) => {
+        return {
+          ...this.state,
+          featureSet: this.state.featureSet + "," + feature,
+        };
+      });
+    }
+    console.log(this.state.featureSet);
+  };
+  generateCSV = async () => {
+    if (this.state.featureSet == 0) {
+      return;
+    }
+    let file_dir = await requests.generateCSV(
+      this.state.current_qib,
+      this.state.featureSet
+    );
+    if (file_dir) {
+      console.log(file_dir)
+      alert("CSV file path:  " + file_dir.path);
+    }
   };
   render() {
     return (
@@ -101,7 +130,7 @@ export default class QIBView extends Component {
                   <Dropdown.Item href="#" onClick={this.fetchQIBs}>
                     All
                   </Dropdown.Item>
-                  {this.state.albums.map(album => (
+                  {this.state.albums.map((album) => (
                     <Dropdown.Item
                       key={album.id}
                       href="#"
@@ -123,7 +152,9 @@ export default class QIBView extends Component {
                         type="date"
                         placeholder="Enter date"
                         value={this.state.date}
-                        onChange={e => this.setState({ date: e.target.value })}
+                        onChange={(e) =>
+                          this.setState({ date: e.target.value })
+                        }
                       />
                       <Button
                         variant="primary"
@@ -138,9 +169,9 @@ export default class QIBView extends Component {
               </Dropdown>
             </Row>
             <ListGroup className="m-2">
-              {this.state.qibs.map(qib => (
+              {this.state.qibs.map((qib) => (
                 <ListGroupItem key={qib.id}>
-                  Id : {qib.id} <br></br> timeStamp: {qib.timeStamp}
+                  Id : {qib.id} <br></br> timeStamp: {qib.time_stamp}
                   <Button
                     color="info"
                     style={{ padding: 4, marginLeft: 5 }}
@@ -155,38 +186,39 @@ export default class QIBView extends Component {
           </Col>
           <Col lg={9}>
             <p style={{ fontWeight: 200, fontSize: 25, color: "black" }}>
-              Table
+              QIB Table
             </p>
-            <Row className="ml-5 mt-1 mb-3">
-              <Dropdown>
-                <Dropdown.Toggle
-                  variant="success"
-                  id="dropdown-basic"
-                  size="sm"
-                >
-                  Export to CSV
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Form className="m-2">
-                    <Form.Group controlId="dateOfExtraction">
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter feature separated by space"
-                        value={this.state.featureSet}
-                        onChange={e =>
-                          this.setState({ featureSet: e.target.value })
-                        }
-                      />
-                      <Button variant="primary" size="sm">
-                        Export
-                      </Button>
-                    </Form.Group>
-                  </Form>
-                </Dropdown.Menu>
-              </Dropdown>
+            <Row className="ml-5 mb-3">
+              <Form>
+                <Form.Group as={Row} controlId="validationFormikUsername">
+                  <InputGroup>
+                    <InputGroup.Prepend onClick={this.generateCSV}>
+                      <InputGroup.Text
+                        id="inputGroupPrepend"
+                        style={{ backgroundColor: "#39a451", color: "white" }}
+                      >
+                        Export CSV
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control
+                      type="text"
+                      placeholder="Click feature to add"
+                      aria-describedby="inputGroupPrepend"
+                      name="features"
+                      value={this.state.featureSet}
+                      onChange={(e) =>
+                        this.setState({ featureSet: e.target.value })
+                      }
+                      className="input-large"
+                    />
+                  </InputGroup>
+                </Form.Group>
+              </Form>
             </Row>
-
-            <QIBFeatureTable data={this.state.qib_features} />
+            <QIBFeatureTable
+              data={this.state.qib_features}
+              onFeatureClick={this.handleFeatureClick}
+            />
           </Col>
         </Row>
       </div>

@@ -67,6 +67,49 @@ export class requests {
       console.error(e);
     }
   }
+   static async getStudyByAlbum(album_id) {
+    try {
+      let response = await fetch(url + "studies/" + album_id, {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  static async generateCSV(qib_id, features) {
+    try {
+      let response = await fetch(url + "generate_csv/" + qib_id, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          features: features,
+        }),
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  static async uploadCSV(data) {
+    console.log(data);
+    try {
+      let response = await fetch(url + "upload_csv", {
+        method: "POST",
+        body: data,
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 export default requests;

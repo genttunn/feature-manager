@@ -1,98 +1,48 @@
 import React, { Component, useState, useEffect } from "react";
 import { Table } from "react-bootstrap";
 
-export default function QIBFeatureTable({ data }) {
-  const [columns, setColumns] = useState([]);
+export default function QIBFeatureTable({ data, onFeatureClick }) {
+  const [rows, setRows] = useState([]);
   useEffect(() => {
-    makeArray();
+    console.log('new table')
     console.log(data);
+    data && generateRows(data)
   }, [data]);
-  let makeArray = () => {
-    let array = [];
-    for (var key in data) {
-      if (data.hasOwnProperty(key)) {
-        array.push(data[key]);
+
+  let generateRows = (data) => {
+    let countRows = data[0].values.length;
+    let countColumns = data.length;
+    console.log(countRows)
+    console.log(countColumns)
+    let rows = [];
+    let i;
+    let u;
+    for (i = 0; i < countRows; i++) {
+      let row=[];
+      for (u = 0; u < countColumns; u++){
+          // let cell={};
+          // let a = data[u].column_name
+          let b = data[u].values[i]
+          // cell[a] = b;
+          row.push(b)
       }
+      rows.push(row);
     }
-    // setColumns(array);
+    console.log(rows);
+    setRows(rows);
   };
+
   return (
     <Table striped bordered hover size="sm" responsive>
       <thead>
         <tr>
-          <th>#</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-          <th>$</th>
-          <th>One Column</th>
-          <th>One Column</th>
-          <th>One Column</th>
-          <th>@</th>
-          <th>One Column</th>
-          <th>One Column</th>
-          <th>One Column</th>
-          <th>!</th>
-          <th>One Column</th>
-          <th>One Column</th>
-          <th>One Column</th>}
+          {data && data.map(column=><th onClick={()=>onFeatureClick(column.column_name)}>{column.column_name}</th>)}
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>1</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>3</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>3</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-          <td>3</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@famt</td>
-        </tr>
+       {rows && rows.map(row=><tr>{row.map(entry=><td>{entry}</td>)}</tr>)}
+       
+      
       </tbody>
     </Table>
   );
