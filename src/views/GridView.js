@@ -11,14 +11,20 @@ import {
   Form,
   InputGroup,
 } from "react-bootstrap";
-
+import QIBFeatureTable from "../components/QIBFeatureTable";
 import { LoadingContext } from "../shared/LoadingContext";
 import requests from "../utils/requests";
+import useWindowDimensions from "../utils/useWindowDimensions";
 export default function GridView() {
   const { loading, setLoading } = useContext(LoadingContext);
+  const [loadingQib, setLoadingQib] = useState(false);
+  const { height, width } = useWindowDimensions();
   const [albums, setAlbums] = useState([]);
   const [qibs, setQibs] = useState([]);
   const [date, setDate] = useState("");
+  const [qibData, setQibData] = useState(null);
+  const [currentQib, setCurrentQib] = useState(0);
+  const [featureSet, setFeatureSet] = useState("");
   useEffect(() => {
     if (loading === true) {
       console.log("hey");
@@ -57,6 +63,42 @@ export default function GridView() {
       setQibs(array);
     }
   };
+  let fetchQIBFeature = async (e) => {
+    setLoadingQib(true);
+    let object = await requests.getQIBFeatureByQIB(e);
+    if (object && object.length > 0) {
+      setQibData(object);
+      setCurrentQib(e);
+      setLoadingQib(false);
+    }
+  };
+  let handleFeatureClick = (feature) => {
+    if (
+      feature === "modality" ||
+      feature === "label" ||
+      feature === "patientName" ||
+      feature === "ROI"
+    ) {
+      return;
+    } else {
+      setFeatureSet(featureSet + "," + feature);
+    }
+  };
+   let generateCSV = async () => {
+    if (featureSet === "") {
+      return;
+    }
+    let file_dir = await requests.generateCSV(
+      currentQib,featureSet
+    );
+    if (file_dir) {
+      console.log(file_dir)
+      alert("CSV file path:  " + file_dir.path);
+    }
+  };
+
+
+
   return (
     <div>
       <Row className="m-3">
@@ -65,7 +107,7 @@ export default function GridView() {
             QIBs: {qibs.length}
           </p>
           <Row
-            className="mx-1 px-1"
+            className="mx-1 px-1 my-1"
             style={{
               ...styles.box,
               display: "flex",
@@ -113,55 +155,57 @@ export default function GridView() {
               </Dropdown.Menu>
             </Dropdown>
           </Row>
-          <ListGroup className="mx-1" lg={12} style={{ textAlign: "left" }}>
-            {qibs.map((qib) => (
-              <ListGroupItem key={qib.id}>
-                <Row>
-                  <Col lg={8}>
-                    <span>ID : {qib.id}</span>
-                    <br></br>
-                    <span>Name : {qib.name}</span>
-                    <br></br>
-                    <span>Description : {qib.description}</span>
-                    <br></br>
-                    <span>Date: {qib.time_stamp}</span>
-                  </Col>
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Row className="my-1 mr-1">
-                      <Button
-                        className="btn btn-danger btn-block"
-                        style={{ width: 70 }}
-                      >
-                        Edit
-                      </Button>
-                    </Row>
-                    <Row className="my-1 mr-1">
-                      <Button
-                        className="btn btn-info btn-block"
-                        style={{ width: 70 }}
-                        //   onClick={() => this.fetchQIBFeature(qib.id)}
-                      >
-                        Load
-                      </Button>
-                    </Row>
-                  </Col>
-                </Row>
-              </ListGroupItem>
-            ))}
-          </ListGroup>
+          <div style={{ height: height * 0.8, overflow: "scroll" }}>
+            <ListGroup className="mx-1" lg={12} style={{ textAlign: "left" }}>
+              {qibs.map((qib) => (
+                <ListGroupItem key={qib.id}>
+                  <Row>
+                    <Col lg={8}>
+                      <span>ID : {qib.id}</span>
+                      <br></br>
+                      <span>Name : {qib.name}</span>
+                      <br></br>
+                      <span>Description : {qib.description}</span>
+                      <br></br>
+                      <span>Date: {qib.time_stamp}</span>
+                    </Col>
+                    <Col
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Row className="my-1 mr-1">
+                        <Button
+                          className="btn btn-danger btn-block"
+                          style={{ width: 70 }}
+                        >
+                          Edit
+                        </Button>
+                      </Row>
+                      <Row className="my-1 mr-1">
+                        <Button
+                          className="btn btn-info btn-block"
+                          style={{ width: 70 }}
+                          onClick={() => fetchQIBFeature(qib.id)}
+                        >
+                          Load
+                        </Button>
+                      </Row>
+                    </Col>
+                  </Row>
+                </ListGroupItem>
+              ))}
+            </ListGroup>
+          </div>
         </Col>
-        <Col lg={9} sm={12} className="mx-1" style={styles.box}>
+        <Col lg={9} sm={12} style={styles.box}>
           <p style={{ fontWeight: 200, fontSize: 25, color: "black" }}>
             QIB Table
           </p>
           <Row
-            className="mx-1 px-1"
+            className="mx-1 px-1 my-1"
             style={{
               ...styles.box,
               display: "flex",
@@ -169,13 +213,16 @@ export default function GridView() {
               justifyContent: "space-between",
             }}
           >
-            <Col >
+            <Col>
               <Form width="100%">
                 <InputGroup>
                   <InputGroup.Prepend>
                     <InputGroup.Text
                       id="inputGroupPrepend"
+                      onClick={()=>generateCSV()}
                       style={{ backgroundColor: "#39a451", color: "white" }}
+                      onMouseOver={(e) => e.target.style.backgroundColor = '#2f8a43'}
+                      onMouseOut={(e) => e.target.style.backgroundColor = '#39a451'}
                     >
                       Export CSV
                     </InputGroup.Text>
@@ -185,16 +232,26 @@ export default function GridView() {
                     placeholder="Click feature to add"
                     aria-describedby="inputGroupPrepend"
                     name="features"
-                    //   value={this.state.featureSet}
-                    //   onChange={(e) =>
-                    //     this.setState({ featureSet: e.target.value })
-                    //   }
+                    value={featureSet}
+                    onChange={(e) =>
+                      setFeatureSet(e.target.value)
+                    }
                     className="input-large"
                   />
                 </InputGroup>
               </Form>
             </Col>
           </Row>
+          {loadingQib === true ? (
+            <span>Loading QIB ...</span>
+          ) : (
+            <div style={{ height: height * 0.8, overflow: "scroll" }}>
+              <QIBFeatureTable
+                data={qibData}
+                onFeatureClick={handleFeatureClick}
+              />
+            </div>
+          )}
         </Col>
       </Row>
     </div>
