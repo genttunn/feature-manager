@@ -4,8 +4,7 @@ import { Table } from "react-bootstrap";
 export default function QIBFeatureTable({ data, onFeatureClick }) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
-    console.log('new table')
-    console.log(data);
+
     data && generateRows(data)
   }, [data]);
 

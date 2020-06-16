@@ -20,6 +20,7 @@ export default class QIBView extends Component {
     super(props);
     this.state = {
       albums: [],
+      regions: [],
       qibs: [],
       qib_features: null,
       date: "",
@@ -28,8 +29,19 @@ export default class QIBView extends Component {
     };
   }
   componentDidMount = async () => {
+    this.fetchRegions();
     this.fetchAlbums();
     this.fetchQIBs();
+  };
+  fetchRegions = async () => {
+    let array = await requests.getAllRegions();
+    if (array && array.length > 0) {
+      console.log("fetch region");
+      console.log(array);
+      this.setState((prevState) => {
+        return { ...this.state, regions: array };
+      });
+    }
   };
   fetchAlbums = async () => {
     let array = await requests.getAllAlbums();
@@ -62,6 +74,17 @@ export default class QIBView extends Component {
       });
     }
   };
+  fetchQIBByRegion = async (e) => {
+    console.log(e);
+    let array = await requests.getQIBByRegion(e);
+    if (array) {
+      // console.log("fetch qib");
+      // console.log(array);
+      this.setState((prevState) => {
+        return { ...this.state, qibs: array };
+      });
+    }
+  };
   fetchQIBByDate = async () => {
     const dateSince = this.state.date + " 12:00:00.0";
     console.log(dateSince);
@@ -84,7 +107,7 @@ export default class QIBView extends Component {
     console.log(object);
   };
   handleFeatureClick = (feature) => {
-    if (feature == "modality" || feature == "label") {
+    if (feature == "modality" || feature == "label" || feature == "patientName" || feature == "ROI" ) {
       return;
     } else {
       this.setState((prevState) => {
@@ -118,7 +141,7 @@ export default class QIBView extends Component {
               QIBs: {this.state.qibs.length}
             </p>
             <Row className="ml-5 mt-1 mb-1">
-              <Dropdown className=" mr-5">
+              <Dropdown className=" mr-2">
                 <Dropdown.Toggle
                   variant="success"
                   id="dropdown-basic"
@@ -137,6 +160,29 @@ export default class QIBView extends Component {
                       onClick={() => this.fetchQIBByAlbum(album.id)}
                     >
                       {album.name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+              <Dropdown className=" mr-2">
+                <Dropdown.Toggle
+                  variant="primary"
+                  id="dropdown-basic"
+                  size="sm"
+                >
+                  By Region
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#" onClick={this.fetchQIBs}>
+                    All
+                  </Dropdown.Item>
+                  {this.state.regions.map((region) => (
+                    <Dropdown.Item
+                      key={region.id}
+                      href="#"
+                      onClick={() => this.fetchQIBByRegion(region.id)}
+                    >
+                      {region.name}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>

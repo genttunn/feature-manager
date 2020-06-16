@@ -15,6 +15,21 @@ export class requests {
       console.error(e);
     }
   }
+    static async getAllRegions() {
+    try {
+      let response = await fetch(url + "region", {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      let data = await response.json();
+      return data;
+    } catch (e) {
+      console.error(e);
+    }
+  }
   static async getAllQIBs() {
     try {
       let response = await fetch(url + "qibs", {
@@ -41,6 +56,19 @@ export class requests {
       console.error(e);
     }
   }
+  static async getQIBByRegion(id) {
+    try {
+      let response = await fetch(url + "qibs?region=" + id, {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
   static async getQIBByDate(date) {
     try {
       let response = await fetch(url + "qibs?date=" + date, {
@@ -56,7 +84,7 @@ export class requests {
   }
   static async getQIBFeatureByQIB(id) {
     try {
-      let response = await fetch(url + "qib_features/" + id, {
+      let response = await fetch(url + "qib_features/qib/" + id, {
         method: "GET",
         headers: {
           Accept: "application/json"

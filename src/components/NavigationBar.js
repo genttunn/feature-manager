@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
 
 class NavigationBar extends Component {
   state = {};
@@ -18,6 +18,9 @@ class NavigationBar extends Component {
               </Nav.Link>
               <Nav.Link href={"/database"} style={{ color: "white" }}>
                 Database
+              </Nav.Link>
+                   <Nav.Link href={"/grid"} style={{ color: "white" }}>
+                Grid
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
