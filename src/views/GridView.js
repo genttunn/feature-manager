@@ -10,10 +10,14 @@ import {
   DropdownButton,
   Form,
   InputGroup,
+  Modal,
 } from "react-bootstrap";
-import QIBFeatureTable from "../components/QIBFeatureTable";
+import ReactLoading from "react-loading";
+import UploadCSVForm from "../components/UploadCSVForm";
+import InteractiveQIBTable from "../components/InteractiveQIBTable";
 import { LoadingContext } from "../shared/LoadingContext";
 import requests from "../utils/requests";
+import mockData from "../utils/mockData";
 import useWindowDimensions from "../utils/useWindowDimensions";
 export default function GridView() {
   const { loading, setLoading } = useContext(LoadingContext);
@@ -25,6 +29,11 @@ export default function GridView() {
   const [qibData, setQibData] = useState(null);
   const [currentQib, setCurrentQib] = useState(0);
   const [featureSet, setFeatureSet] = useState("");
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   useEffect(() => {
     if (loading === true) {
       console.log("hey");
@@ -71,6 +80,9 @@ export default function GridView() {
       setCurrentQib(e);
       setLoadingQib(false);
     }
+    // setQibData(mockData);
+    // setCurrentQib(e);
+    // setLoadingQib(false);
   };
   let handleFeatureClick = (feature) => {
     if (
@@ -84,20 +96,20 @@ export default function GridView() {
       setFeatureSet(featureSet + "," + feature);
     }
   };
-   let generateCSV = async () => {
+  let generateCSV = async () => {
     if (featureSet === "") {
       return;
     }
-    let file_dir = await requests.generateCSV(
-      currentQib,featureSet
-    );
+    let file_dir = await requests.generateCSV(currentQib, featureSet);
     if (file_dir) {
-      console.log(file_dir)
+      console.log(file_dir);
       alert("CSV file path:  " + file_dir.path);
     }
   };
 
-
+  let setStyleCard = (qib_id) => {
+    return qib_id == currentQib && "#bfd8ff";
+  };
 
   return (
     <div>
@@ -158,7 +170,10 @@ export default function GridView() {
           <div style={{ height: height * 0.8, overflow: "scroll" }}>
             <ListGroup className="mx-1" lg={12} style={{ textAlign: "left" }}>
               {qibs.map((qib) => (
-                <ListGroupItem key={qib.id}>
+                <ListGroupItem
+                  key={qib.id}
+                  style={{ backgroundColor: setStyleCard(qib.id) }}
+                >
                   <Row>
                     <Col lg={8}>
                       <span>ID : {qib.id}</span>
@@ -214,15 +229,86 @@ export default function GridView() {
             }}
           >
             <Col>
-              <Form width="100%">
+              <Button variant="primary" onClick={handleShow}>
+                Upload QIB
+              </Button>
+              <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Upload your QIB</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                 <UploadCSVForm handleClose={handleClose}/>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            
+            </Col>
+          </Row>
+          <div
+            style={{
+              height: height * 0.8,
+              overflow: "scroll",
+              alignContent: "center",
+            }}
+          >
+            {loadingQib === true ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <span>Loading QIB</span>
+                <div className="mx-2">
+                  <ReactLoading
+                    type={"spokes"}
+                    color={"black"}
+                    height={20}
+                    width={20}
+                  />
+                </div>
+              </div>
+            ) : (
+              <InteractiveQIBTable
+                data={qibData}
+                onFeatureClick={handleFeatureClick}
+              />
+            )}
+          </div>
+        </Col>
+      </Row>
+    </div>
+  );
+}
+
+const styles = {
+  box: {
+    // border: 1,
+    // borderStyle: "solid",
+    // borderColor: "green",
+  },
+};
+
+
+
+  {/* <Form width="100%">
                 <InputGroup>
                   <InputGroup.Prepend>
                     <InputGroup.Text
                       id="inputGroupPrepend"
-                      onClick={()=>generateCSV()}
+                      onClick={() => generateCSV()}
                       style={{ backgroundColor: "#39a451", color: "white" }}
-                      onMouseOver={(e) => e.target.style.backgroundColor = '#2f8a43'}
-                      onMouseOut={(e) => e.target.style.backgroundColor = '#39a451'}
+                      onMouseOver={(e) =>
+                        (e.target.style.backgroundColor = "#2f8a43")
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.backgroundColor = "#39a451")
+                      }
                     >
                       Export CSV
                     </InputGroup.Text>
@@ -233,35 +319,8 @@ export default function GridView() {
                     aria-describedby="inputGroupPrepend"
                     name="features"
                     value={featureSet}
-                    onChange={(e) =>
-                      setFeatureSet(e.target.value)
-                    }
+                    onChange={(e) => setFeatureSet(e.target.value)}
                     className="input-large"
                   />
                 </InputGroup>
-              </Form>
-            </Col>
-          </Row>
-          {loadingQib === true ? (
-            <span>Loading QIB ...</span>
-          ) : (
-            <div style={{ height: height * 0.8, overflow: "scroll" }}>
-              <QIBFeatureTable
-                data={qibData}
-                onFeatureClick={handleFeatureClick}
-              />
-            </div>
-          )}
-        </Col>
-      </Row>
-    </div>
-  );
-}
-
-const styles = {
-  box: {
-    border: 1,
-    borderStyle: "solid",
-    borderColor: "green",
-  },
-};
+              </Form> */}
