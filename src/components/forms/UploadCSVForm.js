@@ -1,19 +1,12 @@
-import React, { Component, useState } from "react";
-import requests from "../utils/requests";
-import bsCustomFileInput from "bs-custom-file-input";
-import axios from "axios";
+import React, { useState } from "react";
+import requests from "../../utils/requests";
 import {
-  Container,
   Row,
-  Col,
-  ListGroup,
-  ListGroupItem,
   Button,
   Form,
 } from "react-bootstrap";
 
 export default function UploadCSVForm({ handleClose }) {
-  const [albums, setAlbums] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("Upload QIB CSV");
   const [albumName, setAlbumName] = useState("");

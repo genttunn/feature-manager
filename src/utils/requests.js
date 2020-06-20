@@ -5,8 +5,8 @@ export class requests {
       let response = await fetch(url + "albums", {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
 
       let data = await response.json();
@@ -15,13 +15,13 @@ export class requests {
       console.error(e);
     }
   }
-    static async getAllRegions() {
+  static async getAllRegions() {
     try {
       let response = await fetch(url + "region", {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
 
       let data = await response.json();
@@ -35,8 +35,8 @@ export class requests {
       let response = await fetch(url + "qibs", {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {
@@ -48,8 +48,8 @@ export class requests {
       let response = await fetch(url + "qibs?album=" + id, {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {
@@ -61,8 +61,26 @@ export class requests {
       let response = await fetch(url + "qibs?region=" + id, {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  static async editQIB(id, name, desc) {
+    try {
+      let response = await fetch(url + "qib_features/qib/" + id, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          description: desc
+        }),
       });
       return await response.json();
     } catch (e) {
@@ -74,8 +92,8 @@ export class requests {
       let response = await fetch(url + "qibs?date=" + date, {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {
@@ -87,21 +105,21 @@ export class requests {
       let response = await fetch(url + "qib_features/qib/" + id, {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {
       console.error(e);
     }
   }
-   static async getStudyByAlbum(album_id) {
+  static async getStudyByAlbum(album_id) {
     try {
       let response = await fetch(url + "studies/" + album_id, {
         method: "GET",
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {
@@ -113,7 +131,7 @@ export class requests {
       let response = await fetch(url + "generate_csv/" + qib_id, {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

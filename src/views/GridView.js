@@ -1,19 +1,16 @@
-import React, { Component, useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
-  Container,
   Row,
   Col,
   ListGroup,
   ListGroupItem,
   Button,
-  Dropdown,
-  DropdownButton,
-  Form,
-  InputGroup,
   Modal,
 } from "react-bootstrap";
 import ReactLoading from "react-loading";
-import UploadCSVForm from "../components/UploadCSVForm";
+import UploadCSVForm from "../components/forms/UploadCSVForm";
+import QIBCard from "../components/QIBCard";
+import QIBFilters from "../components/QIBFilters";
 import InteractiveQIBTable from "../components/InteractiveQIBTable";
 import { LoadingContext } from "../shared/LoadingContext";
 import requests from "../utils/requests";
@@ -25,18 +22,15 @@ export default function GridView() {
   const { height, width } = useWindowDimensions();
   const [albums, setAlbums] = useState([]);
   const [qibs, setQibs] = useState([]);
-  const [date, setDate] = useState("");
   const [qibData, setQibData] = useState(null);
-  const [currentQib, setCurrentQib] = useState(0);
-  const [featureSet, setFeatureSet] = useState("");
+  const [currentQIBLoaded, setCurrentQIBLoaded] = useState(0);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  
   useEffect(() => {
     if (loading === true) {
-      console.log("hey");
       fetchAlbums();
       fetchQIBs();
       setLoading(false);
@@ -46,29 +40,13 @@ export default function GridView() {
   let fetchAlbums = async () => {
     let array = await requests.getAllAlbums();
     if (array && array.length > 0) {
-      console.log("fetch album");
-      console.log(array);
       setAlbums(array);
     }
   };
+
   let fetchQIBs = async () => {
     let array = await requests.getAllQIBs();
     if (array && array.length > 0) {
-      console.log("fetch qibs");
-      setQibs(array);
-    }
-  };
-  let fetchQIBByAlbum = async (e) => {
-    let array = await requests.getQIBByAlbum(e);
-    if (array) {
-      setQibs(array);
-    }
-  };
-  let fetchQIBByDate = async () => {
-    const dateSince = date + " 12:00:00.0";
-    console.log(dateSince);
-    let array = await requests.getQIBByDate(dateSince);
-    if (array) {
       setQibs(array);
     }
   };
@@ -77,157 +55,52 @@ export default function GridView() {
     let object = await requests.getQIBFeatureByQIB(e);
     if (object && object.length > 0) {
       setQibData(object);
-      setCurrentQib(e);
+      setCurrentQIBLoaded(e);
       setLoadingQib(false);
     }
     // setQibData(mockData);
-    // setCurrentQib(e);
+    // setCurrentQIBLoaded(e);
     // setLoadingQib(false);
   };
-  let handleFeatureClick = (feature) => {
-    if (
-      feature === "modality" ||
-      feature === "label" ||
-      feature === "patientName" ||
-      feature === "ROI"
-    ) {
-      return;
-    } else {
-      setFeatureSet(featureSet + "," + feature);
-    }
-  };
-  let generateCSV = async () => {
-    if (featureSet === "") {
-      return;
-    }
-    let file_dir = await requests.generateCSV(currentQib, featureSet);
-    if (file_dir) {
-      console.log(file_dir);
-      alert("CSV file path:  " + file_dir.path);
-    }
-  };
-
   let setStyleCard = (qib_id) => {
-    return qib_id == currentQib && "#bfd8ff";
+    return qib_id === currentQIBLoaded && "#bfd8ff";
   };
-
   return (
     <div>
       <Row className="m-3">
         <Col className="mx-1" style={styles.box}>
-          <p style={{ fontWeight: 200, fontSize: 25, color: "black" }}>
-            QIBs: {qibs.length}
-          </p>
-          <Row
-            className="mx-1 px-1 my-1"
+          <p style={styles.sectionTitle}>QIBs: {qibs.length}</p>
+          <Row className="mx-1 px-1 my-1" style={styles.basicRow}>
+            <QIBFilters
+              fetchQIBs={fetchQIBs}
+              albums={albums}
+              setQibs={setQibs}
+            />
+          </Row>
+          <div
             style={{
-              ...styles.box,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
+              ...styles.scrollBox,
+              height: height * 0.8,
             }}
           >
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                By Album
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#" onClick={() => fetchQIBs()}>
-                  All
-                </Dropdown.Item>
-                {albums.map((album) => (
-                  <Dropdown.Item
-                    key={album.id}
-                    href="#"
-                    onClick={() => fetchQIBByAlbum(album.id)}
-                  >
-                    {album.name}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <Dropdown>
-              <Dropdown.Toggle variant="info" id="dropdown-basic">
-                By Date
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Form className="m-2">
-                  <Form.Group controlId="dateOfExtraction">
-                    <Form.Control
-                      type="date"
-                      placeholder="Enter date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
-                    <Button variant="primary" onClick={() => fetchQIBByDate()}>
-                      Submit
-                    </Button>
-                  </Form.Group>
-                </Form>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Row>
-          <div style={{ height: height * 0.8, overflow: "scroll" }}>
             <ListGroup className="mx-1" lg={12} style={{ textAlign: "left" }}>
               {qibs.map((qib) => (
                 <ListGroupItem
                   key={qib.id}
                   style={{ backgroundColor: setStyleCard(qib.id) }}
                 >
-                  <Row>
-                    <Col lg={8}>
-                      <span>ID : {qib.id}</span>
-                      <br></br>
-                      <span>Name : {qib.name}</span>
-                      <br></br>
-                      <span>Description : {qib.description}</span>
-                      <br></br>
-                      <span>Date: {qib.time_stamp}</span>
-                    </Col>
-                    <Col
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Row className="my-1 mr-1">
-                        <Button
-                          className="btn btn-danger btn-block"
-                          style={{ width: 70 }}
-                        >
-                          Edit
-                        </Button>
-                      </Row>
-                      <Row className="my-1 mr-1">
-                        <Button
-                          className="btn btn-info btn-block"
-                          style={{ width: 70 }}
-                          onClick={() => fetchQIBFeature(qib.id)}
-                        >
-                          Load
-                        </Button>
-                      </Row>
-                    </Col>
-                  </Row>
+                  <QIBCard
+                    qib={qib}
+                    fetchQIBFeature={fetchQIBFeature}
+                  />
                 </ListGroupItem>
               ))}
             </ListGroup>
           </div>
         </Col>
         <Col lg={9} sm={12} style={styles.box}>
-          <p style={{ fontWeight: 200, fontSize: 25, color: "black" }}>
-            QIB Table
-          </p>
-          <Row
-            className="mx-1 px-1 my-1"
-            style={{
-              ...styles.box,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
+          <p style={styles.sectionTitle}>QIB Table</p>
+          <Row className="mx-1 px-1 my-1" style={styles.basicRow}>
             <Col>
               <Button variant="primary" onClick={handleShow}>
                 Upload QIB
@@ -237,7 +110,7 @@ export default function GridView() {
                   <Modal.Title>Upload your QIB</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                 <UploadCSVForm handleClose={handleClose}/>
+                  <UploadCSVForm handleClose={handleClose} />
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={handleClose}>
@@ -245,14 +118,12 @@ export default function GridView() {
                   </Button>
                 </Modal.Footer>
               </Modal>
-            
             </Col>
           </Row>
           <div
             style={{
+              ...styles.scrollBox,
               height: height * 0.8,
-              overflow: "scroll",
-              alignContent: "center",
             }}
           >
             {loadingQib === true ? (
@@ -274,10 +145,7 @@ export default function GridView() {
                 </div>
               </div>
             ) : (
-              <InteractiveQIBTable
-                data={qibData}
-                onFeatureClick={handleFeatureClick}
-              />
+              <InteractiveQIBTable data={qibData} />
             )}
           </div>
         </Col>
@@ -292,11 +160,20 @@ const styles = {
     // borderStyle: "solid",
     // borderColor: "green",
   },
+  sectionTitle: { fontWeight: 200, fontSize: 25, color: "black" },
+  basicRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  scrollBox: {
+    overflow: "scroll",
+    alignContent: "center",
+  },
 };
 
 
-
-  {/* <Form width="100%">
+  /* <Form width="100%">
                 <InputGroup>
                   <InputGroup.Prepend>
                     <InputGroup.Text
@@ -323,4 +200,5 @@ const styles = {
                     className="input-large"
                   />
                 </InputGroup>
-              </Form> */}
+              </Form> */
+

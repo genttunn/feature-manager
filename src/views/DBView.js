@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import requests from "../utils/requests";
-import bsCustomFileInput from "bs-custom-file-input";
-import axios from "axios";
 import {
   Container,
   Row,

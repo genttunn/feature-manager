@@ -1,22 +1,19 @@
-import React, { Component, useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import MaterialTable, { MTableToolbar } from "material-table";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
-import { Button, Row, Col } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 export default function InteractiveQIBTable({ data, onFeatureClick }) {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedColumns, setSelectedColumns] = useState([]);
   const [exportMode, setExportMode] = useState(true);
   useEffect(() => {
     data && formatDataForTable(data);
-    console.log(columns);
-    console.log(rows);
   }, [data]);
 
-  let formatDataForTable = (data) => {
-    const firstRow = data[0];
+  let formatDataForTable = (rawData) => {
+    const firstRow = rawData[0];
     const metadata = ["patientName", "plc_status", "modality", "ROI"];
     Object.keys(firstRow).forEach((key, index) => {
       if (!metadata.includes(key)) {
@@ -36,7 +33,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
         columns.push({ title: key, field: key, filtering: false });
       }
     });
-    setRows(data);
+    setRows(rawData);
   };
   let filterMultipleRows = () => {
     setRows(rows.filter((row) => selectedRows.includes(row)));
@@ -47,16 +44,16 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
     exportButton: true,
     exportAllData: exportMode,
     filtering: true,
-    columnsButton:true
+    columnsButton: true,
   };
-  const tableActions = [
-    {
-      icon: "delete-forever",
-      tooltip: "Remove Row",
-      onClick: (event, rowData) =>
-        setRows(rows.filter((row) => row !== rowData)),
-    },
-  ];
+//   const tableActions = [
+//     {
+//       icon: "delete-forever",
+//       tooltip: "Remove Row",
+//       onClick: (event, rowData) =>
+//         setRows(rows.filter((row) => row !== rowData)),
+//     },
+//   ];
   const theme = createMuiTheme({
     palette: {
       primary: {
@@ -88,6 +85,37 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
       </div>
     ),
   };
+  const editable = {
+    onRowAdd: (newData) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          setRows([...rows, newData]);
+          resolve();
+        }, 1000);
+      }),
+    onRowUpdate: (newData, oldData) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const dataUpdate = [...rows];
+          const index = oldData.tableData.id;
+          dataUpdate[index] = newData;
+          setRows([...dataUpdate]);
+
+          resolve();
+        }, 1000);
+      }),
+    onRowDelete: (oldData) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const dataDelete = [...rows];
+          const index = oldData.tableData.id;
+          dataDelete.splice(index, 1);
+          setRows([...dataDelete]);
+
+          resolve();
+        }, 1000);
+      }),
+  };
   return (
     <React.Fragment>
       {data !== null ? (
@@ -97,7 +125,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
             columns={columns}
             data={rows}
             options={tableOptions}
-            actions={tableActions}
+            // actions={tableActions}
             components={toolBar}
             onSelectionChange={(evt, selectedRow) => {
               selectedRows.includes(selectedRow)
@@ -106,10 +134,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
                   )
                 : selectedRows.push(selectedRow);
             }}
-            onRowClick={(evt, selectedRow) => {
-              console.log(selectedRow);
-              console.log(selectedRows);
-            }}
+            editable={editable}
           />
         </MuiThemeProvider>
       ) : (

@@ -13,14 +13,11 @@ class NavigationBar extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href={"/qib"} style={{ color: "white" }}>
-                QIB
+              <Nav.Link href={"/grid"} style={{ color: "white" }}>
+                Grid
               </Nav.Link>
               <Nav.Link href={"/database"} style={{ color: "white" }}>
                 Database
-              </Nav.Link>
-                   <Nav.Link href={"/grid"} style={{ color: "white" }}>
-                Grid
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
