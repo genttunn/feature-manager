@@ -14,7 +14,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
 
   let formatDataForTable = (rawData) => {
     const firstRow = rawData[0];
-    const metadata = ["patientName", "plc_status", "modality", "ROI"];
+    const metadata = ["PatientName", "plc_status", "Modality", "ROI",'Series_region'];
     Object.keys(firstRow).forEach((key, index) => {
       if (!metadata.includes(key)) {
         columns.push({
@@ -45,15 +45,16 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
     exportAllData: exportMode,
     filtering: true,
     columnsButton: true,
+    showTextRowsSelected: false
   };
-//   const tableActions = [
-//     {
-//       icon: "delete-forever",
-//       tooltip: "Remove Row",
-//       onClick: (event, rowData) =>
-//         setRows(rows.filter((row) => row !== rowData)),
-//     },
-//   ];
+  //   const tableActions = [
+  //     {
+  //       icon: "delete-forever",
+  //       tooltip: "Remove Row",
+  //       onClick: (event, rowData) =>
+  //         setRows(rows.filter((row) => row !== rowData)),
+  //     },
+  //   ];
   const theme = createMuiTheme({
     palette: {
       primary: {
@@ -80,7 +81,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
           size="sm"
           onClick={() => setExportMode(!exportMode)}
         >
-          CSV Export Mode: {exportMode ? "All" : "Current Page"}
+          Current Export Mode: {exportMode ? "All" : "Current Page"}
         </Button>
       </div>
     ),
@@ -96,6 +97,8 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
     onRowUpdate: (newData, oldData) =>
       new Promise((resolve, reject) => {
         setTimeout(() => {
+          console.log(oldData);
+          console.log(newData);
           const dataUpdate = [...rows];
           const index = oldData.tableData.id;
           dataUpdate[index] = newData;
@@ -116,6 +119,11 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
         }, 1000);
       }),
   };
+  let chooseRows = (evt, selectedRow) => {
+    selectedRows.includes(selectedRow)
+      ? setSelectedRows(selectedRows.filter((row) => row !== selectedRow))
+      : selectedRows.push(selectedRow);
+  };
   return (
     <React.Fragment>
       {data !== null ? (
@@ -127,13 +135,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
             options={tableOptions}
             // actions={tableActions}
             components={toolBar}
-            onSelectionChange={(evt, selectedRow) => {
-              selectedRows.includes(selectedRow)
-                ? setSelectedRows(
-                    selectedRows.filter((row) => row !== selectedRow)
-                  )
-                : selectedRows.push(selectedRow);
-            }}
+            onSelectionChange={(evt, selectedRow) => chooseRows(evt,selectedRow)}
             editable={editable}
           />
         </MuiThemeProvider>

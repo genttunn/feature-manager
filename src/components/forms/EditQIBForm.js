@@ -1,46 +1,51 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import requests from "../../utils/requests";
-import { Row, Button, Form } from "react-bootstrap";
+import {Button, Form } from "react-bootstrap";
 import { LoadingContext } from "../../shared/LoadingContext";
-export default function EditQIBForm({ handleCloseEdit, qibID}) {
-  const {setLoading } = useContext(LoadingContext);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+export default function EditQIBForm({ handleCloseEdit, qibID }) {
+  const { setLoading } = useContext(LoadingContext);
+  const [validated, setValidated] = useState(false);
 
-  let onEditClicked = () => {
+  let submitEdit = (name, description) => {
     requests.editQIB(qibID, name, description);
-    setLoading(true);
     handleCloseEdit();
+    setLoading(true);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    console.log(event)
+    const name = event.target.elements.name.value;
+    const description = event.target.elements.description.value;
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      setValidated(true)
+    } else {
+      submitEdit(name, description);
+    }
+  };
   return (
     <React.Fragment>
-      <Form as={Row} className="mx-2">
-        <Form.Control
-          type="text"
-          placeholder="Input name"
-          name="name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          className="input-large"
-        />
-        <Form.Control
-          type="text"
-          placeholder="Input description"
-          name="description"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          className="input-large"
-        />
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        <Form.Group controlId="name">
+          <Form.Label>QIB name</Form.Label>
+          <Form.Control
+            required
+            type="text"
+          />
+          <Form.Control.Feedback>Input OK!</Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group controlId="description">
+          <Form.Label>QIB description</Form.Label>
+          <Form.Control
+            required
+            type="text"
+          />
+          <Form.Control.Feedback>Input OK!</Form.Control.Feedback>
+        </Form.Group>
+        <Button type="submit">Edit</Button>
       </Form>
-      <Button
-        variant="primary"
-        className="my-2 mx-2"
-        type="submit"
-        onClick={() => onEditClicked()}
-      >
-        Edit
-      </Button>
     </React.Fragment>
   );
 }
