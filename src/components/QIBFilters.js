@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Dropdown,
-  Form,
-} from "react-bootstrap";
+import { Button, Dropdown, Form } from "react-bootstrap";
 import requests from "../utils/requests";
+import globalComponents from "../styles/globalComponents";
+import "../App.css";
 export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
   const [date, setDate] = useState("");
   let fetchQIBByAlbum = async (e) => {
@@ -23,8 +21,9 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
   };
   return (
     <React.Fragment>
+      {globalComponents}
       <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
+        <Dropdown.Toggle variant="nord-green" id="dropdown-basic" style={styles.boldText}>
           By Album
         </Dropdown.Toggle>
         <Dropdown.Menu>
@@ -43,7 +42,7 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown>
-        <Dropdown.Toggle variant="info" id="dropdown-basic">
+        <Dropdown.Toggle variant="nord-jade" id="dropdown-basic"  style={styles.boldText}>
           By Date
         </Dropdown.Toggle>
         <Dropdown.Menu>
@@ -64,4 +63,10 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
       </Dropdown>
     </React.Fragment>
   );
+}
+
+const styles = {
+  boldText:{
+    fontWeight:'bold'
+  }
 }

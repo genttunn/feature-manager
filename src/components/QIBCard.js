@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import EditQIBForm from "./forms/EditQIBForm";
+import globalComponents from "../styles/globalComponents";
 export default function QIBCard({ qib, fetchQIBFeature }) {
   const [currentQIBEdited, setCurrentQIBEdited] = useState(0);
   const [showEdit, setShowEdit] = useState(false);
@@ -14,6 +15,7 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
 
   return (
     <React.Fragment>
+    {globalComponents}
       <Row>
         <Col lg={8}>
           <span>ID : {qib.id}</span>
@@ -31,26 +33,29 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent:'center'
           }}
         >
-          <Row className="my-1 mr-1">
+  
             <Button
-              className="btn btn-danger btn-block"
-              style={{ width: 70 }}
+              variant = "nord-orange"
+              className="btn btn-block"
+              style={{...styles.boldText, width: 70}}
               onClick={() => handleShowEdit(qib.id)}
             >
               Edit
             </Button>
-          </Row>
-          <Row className="my-1 mr-1">
+        
+      
             <Button
-              className="btn btn-info btn-block"
-              style={{ width: 70 }}
+            variant = "nord-robin"
+              className="btn btn-block"
+              style={{...styles.boldText, width: 70}}
               onClick={() => fetchQIBFeature(qib.id)}
             >
               Load
             </Button>
-          </Row>
+      
         </Col>
       </Row>
       <Modal show={showEdit} onHide={handleCloseEdit}>
@@ -71,4 +76,9 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
       </Modal>
     </React.Fragment>
   );
+}
+const styles = {
+  boldText:{
+    fontWeight:'bold'
+  }
 }

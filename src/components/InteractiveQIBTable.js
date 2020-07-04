@@ -1,13 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import MaterialTable, { MTableToolbar } from "material-table";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-
+import globalComponents from "../styles/globalComponents";
+import { themeDark, themeLight } from "../styles/globalStyles";
+import { DarkmodeContext } from "../shared/DarkmodeContext";
 import { Button } from "react-bootstrap";
 export default function InteractiveQIBTable({ data, onFeatureClick }) {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [exportMode, setExportMode] = useState(true);
+  const { darkmode } = useContext(DarkmodeContext);
+  const [globalTheme, setGlobalTheme] = useState(themeLight);
+  useEffect(() => {
+    if (darkmode === true) {
+      setGlobalTheme(themeDark);
+    } else if (darkmode === false) {
+      setGlobalTheme(themeLight);
+    }
+  }, [darkmode]);
   useEffect(() => {
     data && formatDataForTable(data);
   }, [data]);
@@ -52,9 +64,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
     filtering: true,
     columnsButton: true,
     showTextRowsSelected: false,
-    headerStyle: {
-      backgroundColor: "#ECEFF4",
-    },
+    headerStyle: globalTheme.table,
   };
   //   const tableActions = [
   //     {
@@ -64,13 +74,25 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
   //         setRows(rows.filter((row) => row !== rowData)),
   //     },
   //   ];
+  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  // const theme = React.useMemo(
+  //   () =>
+  //     createMuiTheme({
+  //       palette: {
+  //         type: prefersDarkMode ? 'dark' : 'light',
+  //       },
+  //     }),
+  //   [prefersDarkMode],
+  // );
+
   const theme = createMuiTheme({
     palette: {
+      type: darkmode === true ? "dark":'light',
       primary: {
-        main: "#9effc3",
+        main: globalTheme.aurora2,
       },
       secondary: {
-        main: "#119142",
+        main: globalTheme.aurora4,
       },
     },
   });
@@ -79,14 +101,18 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
       <div>
         <MTableToolbar {...props} />
         <Button
-          className="btn btn-success mx-2"
+          variant="nord-orange"
+          style={{ fontWeight: "bold" }}
+          className="btn mx-2"
           size="sm"
           onClick={() => filterMultipleRows()}
         >
           Filter selected rows
         </Button>
         <Button
-          className="btn btn-info mx-2"
+          variant="nord-robin"
+          style={{ fontWeight: "bold" }}
+          className="btn mx-2"
           size="sm"
           onClick={() => setExportMode(!exportMode)}
         >
@@ -135,10 +161,11 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
   };
   return (
     <React.Fragment>
+      {globalComponents}
       {data !== null ? (
         <MuiThemeProvider theme={theme}>
           <MaterialTable
-            style={{ backgroundColor: "#ECEFF4" }}
+            style={globalTheme.table}
             title={"Table View"}
             columns={columns}
             data={rows}
@@ -152,7 +179,7 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
           />
         </MuiThemeProvider>
       ) : (
-        <span>Click Load to start</span>
+        <span style={{color: globalTheme.text}}>Click Load to start</span>
       )}
     </React.Fragment>
   );

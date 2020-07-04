@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/globalStyles.css";
+
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 ReactDOM.render(
   <React.StrictMode>
