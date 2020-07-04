@@ -23,6 +23,7 @@ export default function GridView() {
   const [albums, setAlbums] = useState([]);
   const [qibs, setQibs] = useState([]);
   const [qibData, setQibData] = useState(null);
+  const [chartData, setChartData] = useState(null);
   const [currentQIBLoaded, setCurrentQIBLoaded] = useState(0);
   const [show, setShow] = useState(false);
 
@@ -63,7 +64,7 @@ export default function GridView() {
     // setLoadingQib(false);
   };
   let setStyleCard = (qib_id) => {
-    return qib_id === currentQIBLoaded && "#bfd8ff";
+    return qib_id === currentQIBLoaded ? "#A3BE8C" : '#ECEFF4';
   };
   return (
     <div>

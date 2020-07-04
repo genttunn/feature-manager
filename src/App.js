@@ -5,11 +5,15 @@ import NavigationBar from "./components/NavigationBar";
 
 import DBView from "./views/DBView";
 import GridView from "./views/GridView";
+import PlotView from "./views/PlotView";
 import { LoadingContext } from "./shared/LoadingContext";
 const switches = (
   <Switch>
     <Route path="/grid">
       <GridView />
+    </Route>
+    <Route path="/plot">
+      <PlotView />
     </Route>
     <Route path="/database">
       <DBView />

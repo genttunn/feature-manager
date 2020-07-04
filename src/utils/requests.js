@@ -15,15 +15,37 @@ export class requests {
       console.error(e);
     }
   }
-  static async getAllRegions() {
+  static async getFeaturesOfQIB(qib_id) {
     try {
-      let response = await fetch(url + "region", {
+      let response = await fetch(url + "features/" + qib_id, {
         method: "GET",
         headers: {
           Accept: "application/json",
         },
       });
-
+      let data = await response.json();
+      return data;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  static async getScatterplotDataByQIB(qib_id, feature_1_id, feature_2_id) {
+    try {
+      let response = await fetch(
+        url +
+          "chart/scatterplot/" +
+          qib_id +
+          "/" +
+          feature_1_id +
+          "/" +
+          feature_2_id,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
       let data = await response.json();
       return data;
     } catch (e) {
@@ -69,7 +91,7 @@ export class requests {
       console.error(e);
     }
   }
-  static async editQIB(id, name, desc) {
+  static async editQIB(id, name, desc, outcome_columns) {
     try {
       let response = await fetch(url + "qib_features/qib/" + id, {
         method: "PUT",
@@ -79,7 +101,8 @@ export class requests {
         },
         body: JSON.stringify({
           name: name,
-          description: desc
+          description: desc,
+          outcome_columns: outcome_columns
         }),
       });
       return await response.json();
@@ -150,6 +173,20 @@ export class requests {
       let response = await fetch(url + "upload_csv", {
         method: "POST",
         body: data,
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  static async getStatistics() {
+    try {
+      let response = await fetch(url + "statistics/", {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
       });
       return await response.json();
     } catch (e) {

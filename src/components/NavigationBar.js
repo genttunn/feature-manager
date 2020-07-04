@@ -6,17 +6,20 @@ class NavigationBar extends Component {
   render() {
     return (
       <React.Fragment>
-        <Navbar bg="dark" expand="lg">
-          <Navbar.Brand style={{ color: "orange" }}>
+        <Navbar  expand="lg" style={{backgroundColor: '#3B4252'}}>
+          <Navbar.Brand style={{ color: "#8FBCBB" }}>
             Feature Manager
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href={"/grid"} style={{ color: "white" }}>
+              <Nav.Link href={"/grid"} style={{ color: "#ECEFF4" }}>
                 Grid
               </Nav.Link>
-              <Nav.Link href={"/database"} style={{ color: "white" }}>
+              <Nav.Link href={"/plot"} style={{ color: "#ECEFF4" }}>
+                Plot
+              </Nav.Link>
+              <Nav.Link href={"/database"} style={{ color: "#ECEFF4" }}>
                 Database
               </Nav.Link>
             </Nav>

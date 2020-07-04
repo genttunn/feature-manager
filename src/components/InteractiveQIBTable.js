@@ -14,7 +14,13 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
 
   let formatDataForTable = (rawData) => {
     const firstRow = rawData[0];
-    const metadata = ["PatientName", "plc_status", "Modality", "ROI",'Series_region'];
+    const metadata = [
+      "PatientName",
+      "plc_status",
+      "Modality",
+      "ROI",
+      "Series_region",
+    ];
     Object.keys(firstRow).forEach((key, index) => {
       if (!metadata.includes(key)) {
         columns.push({
@@ -45,7 +51,10 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
     exportAllData: exportMode,
     filtering: true,
     columnsButton: true,
-    showTextRowsSelected: false
+    showTextRowsSelected: false,
+    headerStyle: {
+      backgroundColor: "#ECEFF4",
+    },
   };
   //   const tableActions = [
   //     {
@@ -129,13 +138,16 @@ export default function InteractiveQIBTable({ data, onFeatureClick }) {
       {data !== null ? (
         <MuiThemeProvider theme={theme}>
           <MaterialTable
+            style={{ backgroundColor: "#ECEFF4" }}
             title={"Table View"}
             columns={columns}
             data={rows}
             options={tableOptions}
             // actions={tableActions}
             components={toolBar}
-            onSelectionChange={(evt, selectedRow) => chooseRows(evt,selectedRow)}
+            onSelectionChange={(evt, selectedRow) =>
+              chooseRows(evt, selectedRow)
+            }
             editable={editable}
           />
         </MuiThemeProvider>

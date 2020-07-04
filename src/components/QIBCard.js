@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import {
-  Row,
-  Col,
-  Button,
-  Modal,
-} from "react-bootstrap";
-import EditQIBForm from './forms/EditQIBForm'
-export default function QIBCard({ qib,fetchQIBFeature}) {
+import { Row, Col, Button, Modal } from "react-bootstrap";
+import EditQIBForm from "./forms/EditQIBForm";
+export default function QIBCard({ qib, fetchQIBFeature }) {
   const [currentQIBEdited, setCurrentQIBEdited] = useState(0);
   const [showEdit, setShowEdit] = useState(false);
   const handleCloseEdit = () => {
@@ -16,7 +11,7 @@ export default function QIBCard({ qib,fetchQIBFeature}) {
     setCurrentQIBEdited(qibID);
     setShowEdit(true);
   };
-  
+
   return (
     <React.Fragment>
       <Row>
@@ -28,6 +23,8 @@ export default function QIBCard({ qib,fetchQIBFeature}) {
           <span>Description : {qib.description}</span>
           <br></br>
           <span>Date: {qib.time_stamp}</span>
+          <br></br>
+          <span>outcome_columns: {qib.outcome_columns}</span>
         </Col>
         <Col
           style={{
