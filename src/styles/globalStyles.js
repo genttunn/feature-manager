@@ -69,7 +69,7 @@ export const themeLight = {
     color: textColorLight,
   },
   cardSelected: {
-    backgroundColor: nordColor.aurora3,
+    backgroundColor: nordColor.snow1,
     color: textColorLight,
   },
   cardNormal: {

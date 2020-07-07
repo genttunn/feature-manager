@@ -17,13 +17,13 @@ export default function EditQIBForm({ handleCloseEdit, qibID }) {
     const form = event.currentTarget;
     const name = event.target.elements.name.value;
     const description = event.target.elements.description.value;
-    const outcome_columns = event.target.elements.outcome_columns.value;
+   
     
     if (form.checkValidity() === false) {
       event.stopPropagation();
       setValidated(true);
     } else {
-      submitEdit(name, description, outcome_columns);
+      submitEdit(name, description);
     }
   };
   return (
@@ -37,11 +37,6 @@ export default function EditQIBForm({ handleCloseEdit, qibID }) {
         <Form.Group controlId="description">
           <Form.Label>QIB description</Form.Label>
           <Form.Control required type="text" />
-          <Form.Control.Feedback>Input OK!</Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="outcome_columns">
-          <Form.Label>outcome_columns</Form.Label>
-          <Form.Control type="text" />
           <Form.Control.Feedback>Input OK!</Form.Control.Feedback>
         </Form.Group>
         <Button type="submit">Edit</Button>

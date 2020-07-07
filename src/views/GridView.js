@@ -7,7 +7,6 @@ import {
   Button,
   Modal,
 } from "react-bootstrap";
-import ReactLoading from "react-loading";
 import Scrollbar from "react-scrollbars-custom";
 import UploadCSVForm from "../components/forms/UploadCSVForm";
 import QIBCard from "../components/QIBCard";
@@ -20,10 +19,10 @@ import mockData from "../utils/mockData";
 import useWindowDimensions from "../utils/useWindowDimensions";
 import { themeDark, themeLight } from "../styles/globalStyles";
 import globalComponents from "../styles/globalComponents";
+import CircularProgress from "@material-ui/core/CircularProgress";
 export default function GridView() {
   const { loading, setLoading } = useContext(LoadingContext);
   const { darkmode } = useContext(DarkmodeContext);
-  const [globalTheme, setGlobalTheme] = useState(themeLight);
   const [loadingQib, setLoadingQib] = useState(false);
   const { height, width } = useWindowDimensions();
   const [albums, setAlbums] = useState([]);
@@ -43,13 +42,7 @@ export default function GridView() {
     }
   }, [loading]);
 
-  useEffect(() => {
-    if (darkmode === true) {
-      setGlobalTheme(themeDark);
-    } else if (darkmode === false) {
-      setGlobalTheme(themeLight);
-    }
-  }, [darkmode]);
+  const theme = darkmode === true ? themeDark : themeLight;
 
   let fetchAlbums = async () => {
     let array = await requests.getAllAlbums();
@@ -64,29 +57,37 @@ export default function GridView() {
       setQibs(array);
     }
   };
-  let fetchQIBFeature = async (e) => {
+  let fetchQIBFeature = async (qib) => {
     setLoadingQib(true);
-    let object = await requests.getQIBFeatureByQIB(e);
+    let object = await requests.getQIBFeatureByQIB(qib.id);
     if (object && object.length > 0) {
       setQibData(object);
-      setCurrentQIBLoaded(e);
+      setCurrentQIBLoaded(qib);
       setLoadingQib(false);
     }
-    // setQibData(mockData);
-    // setCurrentQIBLoaded(e);
-    // setLoadingQib(false);
   };
+  let saveTags = (updatedQIB) => {
+    setLoading(true);
+    fetchQIBFeature(updatedQIB);
+  };
+  let editTag = async (column, tag) => {
+    if (tag === "outcome") {
+      let updatedQIB = await requests.editOutcome(currentQIBLoaded.id, column);
+      saveTags(updatedQIB);
+    }
+  };
+
   let setStyleCard = (qib_id) => {
-    return qib_id === currentQIBLoaded
-      ? globalTheme.cardSelected
-      : globalTheme.cardNormal;
+    return qib_id === currentQIBLoaded.id
+      ? theme.cardSelected
+      : theme.cardNormal;
   };
   return (
     <div>
       {globalComponents}
       <Row className={layout.rowContainer}>
         <Col className={layout.columnLeft} style={styles.box}>
-          <p style={{ ...styles.sectionTitle, color: globalTheme.text }}>
+          <p style={{ ...styles.sectionTitle, color: theme.text }}>
             QIBs: {qibs.length}
           </p>
           <Row className={layout.rowFilterButtons} style={styles.basicRow}>
@@ -115,9 +116,7 @@ export default function GridView() {
           sm={layout.columnRightSmall}
           style={styles.box}
         >
-          <p style={{ ...styles.sectionTitle, color: globalTheme.text }}>
-            QIB Table
-          </p>
+          <p style={{ ...styles.sectionTitle, color: theme.text }}>QIB Table</p>
           <Row className={layout.rowUploadButtons} style={styles.basicRow}>
             <Col>
               <Button
@@ -151,22 +150,26 @@ export default function GridView() {
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "row",
+                  height: height * 0.75,
+                  flexDirection: "column",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <span style={{color: globalTheme.text}}>Loading QIB</span>
-                <div className="mx-2">
-                  <ReactLoading
-                    type={"spokes"}
-                    color={globalTheme.text}
-                    height={20}
-                    width={20}
+                <span style={{ color: theme.text }}>Loading QIB</span>
+                <div className="mx-2 my-2">
+                  <CircularProgress
+                    style={{ color: theme.text, width: 20, height: 20 }}
                   />
                 </div>
               </div>
             ) : (
-              <InteractiveQIBTable data={qibData} />
+              <InteractiveQIBTable
+                data={qibData}
+                height={height}
+                editTag={editTag}
+                outcome={currentQIBLoaded.outcome_column}
+              />
             )}
           </Scrollbar>
         </Col>

@@ -42,7 +42,7 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown>
-        <Dropdown.Toggle variant="nord-jade" id="dropdown-basic"  style={styles.boldText}>
+        <Dropdown.Toggle variant="nord-robin" id="dropdown-basic"  style={styles.boldText}>
           By Date
         </Dropdown.Toggle>
         <Dropdown.Menu>

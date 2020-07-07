@@ -12,7 +12,10 @@ import {
 import useWindowDimensions from "../utils/useWindowDimensions";
 import requests from "../utils/requests";
 import QIBFeatureScatterplot from "../components/plots/QIBFeatureScatterplot";
+import { DarkmodeContext } from "../shared/DarkmodeContext";
+import { themeDark, themeLight } from "../styles/globalStyles";
 export default function PlotView() {
+  const { darkmode } = useContext(DarkmodeContext);
   const [loading, setLoading] = useState(true);
   const [qibs, setQibs] = useState([]);
   const [statistics, setStatistics] = useState([]);
@@ -22,7 +25,8 @@ export default function PlotView() {
   const [secondFeature, setSecondFeature] = useState(null);
   const [plotData, setPlotData] = useState(null);
   const { height, width } = useWindowDimensions();
-
+  const theme = darkmode === true ? themeDark : themeLight;
+  
   useEffect(() => {
     if (loading === true) {
       fetchQIBs();

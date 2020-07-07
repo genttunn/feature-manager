@@ -91,7 +91,7 @@ export class requests {
       console.error(e);
     }
   }
-  static async editQIB(id, name, desc, outcome_columns) {
+  static async editQIB(id, name, desc) {
     try {
       let response = await fetch(url + "qib_features/qib/" + id, {
         method: "PUT",
@@ -101,8 +101,24 @@ export class requests {
         },
         body: JSON.stringify({
           name: name,
-          description: desc,
-          outcome_columns: outcome_columns
+          description: desc
+        }),
+      });
+      return await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+ static async editOutcome(id, column) {
+    try {
+      let response = await fetch(url + "qib_features/qib/tag/outcome/" + id, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          outcome_column: column
         }),
       });
       return await response.json();

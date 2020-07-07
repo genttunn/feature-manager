@@ -26,21 +26,15 @@ const switches = (
   </Switch>
 );
 function App() {
+  const savedTheme = localStorage.getItem("theme");
   const [loading, setLoading] = useState(true);
-  const [darkmode, setDarkmode] = useState(false);
-  const [globalTheme, setGlobalTheme] = useState(themeLight);
-  useEffect(() => {
-    if (darkmode === true) {
-      setGlobalTheme(themeDark);
-    } else if (darkmode === false) {
-      setGlobalTheme(themeLight);
-    }
-  }, [darkmode]);
+  const [darkmode, setDarkmode] = useState(savedTheme === 'dark'? true : false);
+  const theme = darkmode === true ? themeDark : themeLight;
   return (
     <DarkmodeContext.Provider value={{ darkmode, setDarkmode }}>
       <LoadingContext.Provider value={{ loading, setLoading }}>
         <Router>
-          <div className="App" style={{ backgroundColor: globalTheme.background }}>
+          <div className="App" style={{ backgroundColor: theme.background }}>
             <NavigationBar />
             {switches}
           </div>

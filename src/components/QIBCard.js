@@ -26,7 +26,7 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
           <br></br>
           <span>Date: {qib.time_stamp}</span>
           <br></br>
-          <span>outcome_columns: {qib.outcome_columns}</span>
+          <span>outcome_columns: {qib.outcome_column}</span>
         </Col>
         <Col
           style={{
@@ -51,7 +51,7 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
             variant = "nord-robin"
               className="btn btn-block"
               style={{...styles.boldText, width: 70}}
-              onClick={() => fetchQIBFeature(qib.id)}
+              onClick={() => fetchQIBFeature(qib)}
             >
               Load
             </Button>
