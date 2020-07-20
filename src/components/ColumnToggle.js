@@ -54,6 +54,7 @@ export default function ColumnToggle({ columnName, editTag, outcome }) {
     editTag(column, tag);
   };
   return (
+    <React.Fragment>
     <Dropdown>
       <Dropdown.Toggle
         as={CustomToggle}
@@ -67,11 +68,12 @@ export default function ColumnToggle({ columnName, editTag, outcome }) {
         >
           Outcome
         </Dropdown.Item>
-        <Dropdown.Item eventKey="metadata">Metadata</Dropdown.Item>
+        {/* <Dropdown.Item eventKey="metadata">Metadata</Dropdown.Item>
         <Dropdown.Item eventKey="feature">
           Feature
-        </Dropdown.Item>
+        </Dropdown.Item> */}
       </Dropdown.Menu>
     </Dropdown>
+    </React.Fragment>
   );
 }

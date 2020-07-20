@@ -8,6 +8,8 @@ import {
   ListGroupItem,
   Button,
   Form,
+  Tab,
+  Nav,
 } from "react-bootstrap";
 
 export default class DBView extends Component {
@@ -19,7 +21,7 @@ export default class DBView extends Component {
       filename: "Upload QIB CSV",
       albumname: "",
       family: "",
-      studies: []
+      studies: [],
     };
   }
   componentDidMount = async () => {
@@ -43,97 +45,51 @@ export default class DBView extends Component {
     let data = new FormData();
     data.append("file", this.state.selectedFile);
     data.append("album_name", this.state.album_name);
-    data.append("family", this.state.family)
-    requests.uploadCSV(data)
+    data.append("family", this.state.family);
+    requests.uploadCSV(data);
   };
-    fetchStudiesByAlbum = async (e) => {
+  fetchStudiesByAlbum = async (e) => {
     let object = await requests.getStudyByAlbum(e);
     if (object && object.length > 0) {
       this.setState((prevState) => {
-        return { ...this.state, studies: object};
+        return { ...this.state, studies: object };
       });
     }
     console.log(object);
   };
   render() {
     return (
-      <Container>
-        <Row className="mb-5 mt-5">
-          <Col lg={12}>
-            <Form as={Row}>
-              <Form.File
-                id="file"
-                label={this.state.filename}
-                custom
-                onChange={this.onChangeHandler}
-              />
-              <Form.Control
-                type="text"
-                placeholder="Input album name"
-                name="album_name"
-                value={this.state.album_name}
-                onChange={(e) => this.setState({ album_name: e.target.value })}
-                className="input-large"
-              />
-              <Form.Control
-                type="text"
-                placeholder="Input feature family"
-                name="family"
-                value={this.state.family}
-                onChange={(e) => this.setState({ family: e.target.value })}
-                className="input-large"
-              />
-            </Form>
-            <Button
-              variant="primary"
-              size="sm"
-              className="m-2"
-              onClick={this.onClickHandler}
-            >
-              Upload
-            </Button>
+      <Tab.Container id="left-tabs" defaultActiveKey="first" style={styles.body}>
+        <Row>
+          <Col sm={3} style={styles.sidebar}>
+            <Nav.Link eventKey="first">Tab 1</Nav.Link>
+            <Nav.Link eventKey="second">Tab 2</Nav.Link>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              <Tab.Pane eventKey="first">Hellooooooooo</Tab.Pane>
+              <Tab.Pane eventKey="second">Hellooooooooo2</Tab.Pane>
+            </Tab.Content>
           </Col>
         </Row>
-        <Row className="mb-5 mt-5">
-          <Col lg={12}>
-            <p style={{ fontWeight: 200, fontSize: 30, color: "black" }}>
-              Number of albums: {this.state.albums.length}
-            </p>
-
-            <ListGroup>
-              {this.state.albums.map((album) => (
-                <ListGroupItem key={album.id}>
-                  Name : {album.name}, description : {album.description}{" "}
-                  <Button
-                    variant="success"
-                    size="sm"
-                    style={{ padding: 4, marginLeft: 5 }}
-                    onClick={() => this.fetchStudiesByAlbum(album.id)}
-                  >
-                    Studies
-                  </Button>
-                  
-                </ListGroupItem>
-              ))}
-            </ListGroup>
-          </Col>
-        </Row>
-           <Row className="mb-5 mt-5">
-          <Col lg={12}>
-            <p style={{ fontWeight: 200, fontSize: 30, color: "black" }}>
-              Studies: {this.state.studies.length}
-            </p>
-
-            <ListGroup>
-              {this.state.studies.map((study) => (
-                <ListGroupItem key={study.id}>
-                  Patient : {study.patient.first_name+" "+study.patient.last_name}, timeStamp : {study.time_stamp}
-                </ListGroupItem>
-              ))}
-            </ListGroup>
-          </Col>
-        </Row>
-      </Container>
+      </Tab.Container>
     );
   }
 }
+const styles = {
+  body: {
+    display: "grid",
+    gridTemplateColumns: "minmax(150px, 25%) 1fr",
+    padding: 0,
+    margin: 0,
+  },
+  sidebar: {
+    height: "100vh",
+    background: "#434C5E",
+    fontSize: "1rem",
+    textAlign: "center"
+  },
+  content: {
+    padding: "2rem",
+  },
+};

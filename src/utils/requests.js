@@ -91,9 +91,24 @@ export class requests {
       console.error(e);
     }
   }
+  static async deleteQIB(id) {
+    try {
+      let response = await fetch(url + "qib/" + id, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      let res = await response.json();
+      console.log(res);
+      return res
+    } catch (e) {
+      console.error(e);
+    }
+  }
   static async editQIB(id, name, desc) {
     try {
-      let response = await fetch(url + "qib_features/qib/" + id, {
+      let response = await fetch(url + "qib/" + id, {
         method: "PUT",
         headers: {
           Accept: "application/json",
@@ -101,7 +116,7 @@ export class requests {
         },
         body: JSON.stringify({
           name: name,
-          description: desc
+          description: desc,
         }),
       });
       return await response.json();
@@ -109,16 +124,16 @@ export class requests {
       console.error(e);
     }
   }
- static async editOutcome(id, column) {
+  static async editOutcome(id, column) {
     try {
-      let response = await fetch(url + "qib_features/qib/tag/outcome/" + id, {
+      let response = await fetch(url + "qib/tag/outcome/" + id, {
         method: "PUT",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          outcome_column: column
+          outcome_column: column,
         }),
       });
       return await response.json();
@@ -141,7 +156,7 @@ export class requests {
   }
   static async getQIBFeatureByQIB(id) {
     try {
-      let response = await fetch(url + "qib_features/qib/" + id, {
+      let response = await fetch(url + "qib_features/" + id, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -159,23 +174,6 @@ export class requests {
         headers: {
           Accept: "application/json",
         },
-      });
-      return await response.json();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  static async generateCSV(qib_id, features) {
-    try {
-      let response = await fetch(url + "generate_csv/" + qib_id, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          features: features,
-        }),
       });
       return await response.json();
     } catch (e) {

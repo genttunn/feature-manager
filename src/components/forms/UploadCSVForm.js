@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import requests from "../../utils/requests";
 import { Row, Button, Form } from "react-bootstrap";
 import { LoadingContext } from "../../shared/LoadingContext";
+
 export default function UploadCSVForm({ handleClose }) {
   const { setLoading } = useContext(LoadingContext);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,7 +13,7 @@ export default function UploadCSVForm({ handleClose }) {
     setSelectedFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
   };
-  let uploadCSV = (albumName,featureFamily,qibName,qibDescription) => {
+  let uploadCSV = (albumName, featureFamily, qibName, qibDescription) => {
     let data = new FormData();
     data.append("file_name", fileName);
     data.append(fileName, selectedFile);
@@ -37,7 +38,7 @@ export default function UploadCSVForm({ handleClose }) {
       event.stopPropagation();
       setValidated(true);
     } else {
-      uploadCSV(albumName,featureFamily,qibName,qibDescription);
+      uploadCSV(albumName, featureFamily, qibName, qibDescription);
     }
   };
   return (
@@ -73,6 +74,24 @@ export default function UploadCSVForm({ handleClose }) {
           <Form.Control required type="text" />
           <Form.Control.Feedback>Input OK!</Form.Control.Feedback>
         </Form.Group>
+        <Form.Group controlId="qibType">
+          <Form.Label>QIB type</Form.Label>
+          <Row className="mx-2">
+            <Form.Check
+              inline
+              label="New QIB"
+              type="radio"
+              id="inline-radio-1"
+            />
+            <Form.Check
+              label="Custom Filter"
+              type="radio"
+              id="inline-radio-2"
+            />
+          </Row>
+          <Form.Control.Feedback>Choose one</Form.Control.Feedback>
+        </Form.Group>
+
         <Button type="submit">Submit</Button>
       </Form>
     </React.Fragment>
@@ -132,7 +151,6 @@ export default function UploadCSVForm({ handleClose }) {
 //     Upload
 //   </Button>
 // </Form>
-
 
 //  let onFileSelected = (event) => {
 //     setSelectedFile(event.target.files[0]);

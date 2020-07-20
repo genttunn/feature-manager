@@ -113,7 +113,7 @@ export default function InteractiveQIBTable({
         main: theme.aurora2,
       },
       secondary: {
-        main: theme.aurora4,
+        main: theme.aurora2,
       },
     },
   });
@@ -123,7 +123,7 @@ export default function InteractiveQIBTable({
         <MTableToolbar {...props} />
         <Button
           variant="nord-orange"
-          style={{ fontWeight: "bold" }}
+          style={{ fontWeight: "bold",borderRadius:20 }}
           className="btn mx-2"
           size="sm"
           onClick={() => filterMultipleRows()}
@@ -132,7 +132,7 @@ export default function InteractiveQIBTable({
         </Button>
         <Button
           variant="nord-robin"
-          style={{ fontWeight: "bold" }}
+          style={{ fontWeight: "bold",borderRadius:20 }}
           className="btn mx-2"
           size="sm"
           onClick={() => setExportMode(!exportMode)}
@@ -187,7 +187,7 @@ export default function InteractiveQIBTable({
         <MuiThemeProvider theme={muiTheme}>
           <MaterialTable
             style={theme.table}
-            title={"Table View"}
+            title={"Outcome : " + outcome}
             columns={columns}
             data={rows}
             options={tableOptions}

@@ -53,8 +53,9 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
                 placeholder="Enter date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                
               />
-              <Button variant="primary" onClick={() => fetchQIBByDate()}>
+              <Button className='mx-1 my-2' variant="primary" onClick={() => fetchQIBByDate()}>
                 Submit
               </Button>
             </Form.Group>
@@ -67,6 +68,7 @@ export default function QIBFilters({ fetchQIBs, albums, setQibs }) {
 
 const styles = {
   boldText:{
-    fontWeight:'bold'
+    fontWeight:'bold',
+    borderRadius:20
   }
 }

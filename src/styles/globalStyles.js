@@ -21,7 +21,6 @@ const textColorDark = nordColor.snow3;
 const backgroundColorDarkPrimary = nordColor.night1;
 const backgroundColorDarkSecondary = nordColor.night2;
 
-
 const textColorLight = nordColor.night1;
 const backgroundColorLightPrimary = nordColor.snow1;
 const backgroundColorLightSecondary = nordColor.snow3;
@@ -39,6 +38,10 @@ export const themeDark = {
   },
   loader: textColorDark,
   table: {
+    backgroundColor: backgroundColorDarkSecondary,
+    color: textColorDark,
+  },
+  box: {
     backgroundColor: backgroundColorDarkSecondary,
     color: textColorDark,
   },
@@ -63,8 +66,12 @@ export const themeLight = {
   logo: {
     color: logo,
   },
-  loader:textColorLight,
+  loader: textColorLight,
   table: {
+    backgroundColor: backgroundColorLightSecondary,
+    color: textColorLight,
+  },
+  box: {
     backgroundColor: backgroundColorLightSecondary,
     color: textColorLight,
   },

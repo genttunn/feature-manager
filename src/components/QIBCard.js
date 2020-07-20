@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import EditQIBForm from "./forms/EditQIBForm";
 import globalComponents from "../styles/globalComponents";
-export default function QIBCard({ qib, fetchQIBFeature }) {
+export default function QIBCard({ qib, fetchQIBFeature, deleteQIB}) {
   const [currentQIBEdited, setCurrentQIBEdited] = useState(0);
   const [showEdit, setShowEdit] = useState(false);
   const handleCloseEdit = () => {
@@ -12,50 +12,54 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
     setCurrentQIBEdited(qibID);
     setShowEdit(true);
   };
-
   return (
     <React.Fragment>
-    {globalComponents}
+      {globalComponents}
       <Row>
-        <Col lg={8}>
-          <span>ID : {qib.id}</span>
+        <Col lg={9}>
+          <span><b>ID : </b> {qib.id}</span>
           <br></br>
-          <span>Name : {qib.name}</span>
+          <span><b>Name : </b> {qib.name}</span>
           <br></br>
-          <span>Description : {qib.description}</span>
+          <span><b>Description : </b> {qib.description}</span>
           <br></br>
-          <span>Date: {qib.time_stamp}</span>
+          <span><b>Date: </b>{qib.time_stamp}</span>
           <br></br>
-          <span>outcome_columns: {qib.outcome_column}</span>
+          <span><b>outcome_column: </b>{qib.outcome_column}</span>
         </Col>
         <Col
+        lg={3}
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent:'center'
+            justifyContent: "center",
           }}
         >
-  
-            <Button
-              variant = "nord-orange"
-              className="btn btn-block"
-              style={{...styles.boldText, width: 70}}
-              onClick={() => handleShowEdit(qib.id)}
-            >
-              Edit
-            </Button>
-        
-      
-            <Button
-            variant = "nord-robin"
-              className="btn btn-block"
-              style={{...styles.boldText, width: 70}}
-              onClick={() => fetchQIBFeature(qib)}
-            >
-              Load
-            </Button>
-      
+          <Button
+            variant="nord-robin"
+            className="btn-sm btn-block "
+            style={{ ...styles.boldText, width: 70 }}
+            onClick={() => fetchQIBFeature(qib)}
+          >
+            Load
+          </Button>
+          <Button
+            variant="nord-pink"
+            className="btn-sm btn-block "
+            style={{ ...styles.boldText, width: 70 }}
+            onClick={() => handleShowEdit(qib.id)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="nord-orange"
+            className="btn-sm btn-block "
+            style={{ ...styles.boldText, width: 70 }}
+            onClick={() => deleteQIB(qib)}
+          >
+            Delete
+          </Button>
         </Col>
       </Row>
       <Modal show={showEdit} onHide={handleCloseEdit}>
@@ -78,7 +82,8 @@ export default function QIBCard({ qib, fetchQIBFeature }) {
   );
 }
 const styles = {
-  boldText:{
-    fontWeight:'bold'
-  }
-}
+  boldText: {
+    fontWeight: "bold",
+    borderRadius: 20,
+  },
+};

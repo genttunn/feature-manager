@@ -29,7 +29,7 @@ const globalComponents = (
     }
     .btn-nord-cotton {
       background-color: ${globalStyles.frost3};
-      color: ${globalStyles.snow3};
+      color: ${globalStyles.night1};
     }
     .btn-nord-robin {
       background-color: ${globalStyles.frost2};

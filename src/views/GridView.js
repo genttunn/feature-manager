@@ -66,6 +66,16 @@ export default function GridView() {
       setLoadingQib(false);
     }
   };
+  let deleteQIB = async (qib) => {
+    if(qib.id === currentQIBLoaded.id) {
+      setQibData(null)
+    }
+    let object = await requests.deleteQIB(qib.id);
+    if (object) {
+      setLoading(true)
+      console.log("delete ok");
+    }
+  }
   let saveTags = (updatedQIB) => {
     setLoading(true);
     fetchQIBFeature(updatedQIB);
@@ -83,7 +93,7 @@ export default function GridView() {
       : theme.cardNormal;
   };
   return (
-    <div>
+    <div className="container-fluid">
       {globalComponents}
       <Row className={layout.rowContainer}>
         <Col className={layout.columnLeft} style={styles.box}>
@@ -105,7 +115,7 @@ export default function GridView() {
             >
               {qibs.map((qib) => (
                 <ListGroupItem key={qib.id} style={setStyleCard(qib.id)}>
-                  <QIBCard qib={qib} fetchQIBFeature={fetchQIBFeature} />
+                  <QIBCard qib={qib} fetchQIBFeature={fetchQIBFeature} deleteQIB={deleteQIB}/>
                 </ListGroupItem>
               ))}
             </ListGroup>
@@ -199,6 +209,7 @@ const styles = {
   },
   boldText: {
     fontWeight: "bold",
+    borderRadius:20
   },
 };
 
