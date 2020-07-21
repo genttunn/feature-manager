@@ -13,7 +13,7 @@ export default function QIBCard({ qib, fetchQIBFeature, deleteQIB}) {
     setShowEdit(true);
   };
   return (
-    <React.Fragment>
+    <React.Fragment >
       {globalComponents}
       <Row>
         <Col lg={9}>

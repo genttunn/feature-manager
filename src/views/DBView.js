@@ -62,13 +62,13 @@ export default class DBView extends Component {
       <Tab.Container id="left-tabs" defaultActiveKey="first" style={styles.body}>
         <Row>
           <Col sm={3} style={styles.sidebar}>
-            <Nav.Link eventKey="first">Tab 1</Nav.Link>
-            <Nav.Link eventKey="second">Tab 2</Nav.Link>
+            <Nav.Link eventKey="album">Album</Nav.Link>
+            <Nav.Link eventKey="patient">Patient</Nav.Link>
           </Col>
           <Col sm={9}>
             <Tab.Content>
-              <Tab.Pane eventKey="first">Hellooooooooo</Tab.Pane>
-              <Tab.Pane eventKey="second">Hellooooooooo2</Tab.Pane>
+              <Tab.Pane eventKey="album">Hellooooooooo</Tab.Pane>
+              <Tab.Pane eventKey="patient">Hellooooooooo2</Tab.Pane>
             </Tab.Content>
           </Col>
         </Row>
@@ -77,12 +77,6 @@ export default class DBView extends Component {
   }
 }
 const styles = {
-  body: {
-    display: "grid",
-    gridTemplateColumns: "minmax(150px, 25%) 1fr",
-    padding: 0,
-    margin: 0,
-  },
   sidebar: {
     height: "100vh",
     background: "#434C5E",

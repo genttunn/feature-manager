@@ -67,15 +67,15 @@ export default function GridView() {
     }
   };
   let deleteQIB = async (qib) => {
-    if(qib.id === currentQIBLoaded.id) {
-      setQibData(null)
+    if (qib.id === currentQIBLoaded.id) {
+      setQibData(null);
     }
     let object = await requests.deleteQIB(qib.id);
     if (object) {
-      setLoading(true)
+      setLoading(true);
       console.log("delete ok");
     }
-  }
+  };
   let saveTags = (updatedQIB) => {
     setLoading(true);
     fetchQIBFeature(updatedQIB);
@@ -107,7 +107,7 @@ export default function GridView() {
               setQibs={setQibs}
             />
           </Row>
-          <Scrollbar style={{ height: height * 0.75 }}>
+          <Scrollbar style={{ height: "75vh" }}>
             <ListGroup
               className={layout.listQIBCards}
               lg={12}
@@ -115,7 +115,11 @@ export default function GridView() {
             >
               {qibs.map((qib) => (
                 <ListGroupItem key={qib.id} style={setStyleCard(qib.id)}>
-                  <QIBCard qib={qib} fetchQIBFeature={fetchQIBFeature} deleteQIB={deleteQIB}/>
+                  <QIBCard
+                    qib={qib}
+                    fetchQIBFeature={fetchQIBFeature}
+                    deleteQIB={deleteQIB}
+                  />
                 </ListGroupItem>
               ))}
             </ListGroup>
@@ -153,14 +157,14 @@ export default function GridView() {
           </Row>
           <Scrollbar
             style={{
-              height: height * 0.75,
+              height: "75vh",
             }}
           >
             {loadingQib === true ? (
               <div
                 style={{
                   display: "flex",
-                  height: height * 0.75,
+                  height: "75vh",
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
@@ -209,7 +213,7 @@ const styles = {
   },
   boldText: {
     fontWeight: "bold",
-    borderRadius:20
+    borderRadius: 20,
   },
 };
 
