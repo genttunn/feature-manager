@@ -33,7 +33,6 @@ export default function PlotView() {
     if (loading === true) {
       fetchQIBs();
       fetchStats();
-      setLoading(false);
     }
     console.log(qibs);
   }, [loading]);
@@ -48,6 +47,7 @@ export default function PlotView() {
     let stats = await requests.getStatistics();
     if (stats !== null) {
       setStatistics(stats);
+      setLoading(false);
     }
   };
   let fetchFeature = async (qib) => {

@@ -11,79 +11,60 @@ import {
   Tab,
   Nav,
 } from "react-bootstrap";
+import Scrollbar from "react-scrollbars-custom";
+import AlbumView from "./dbitems/AlbumView";
+import PatientView from "./dbitems/PatientView";
+import ModalityRegionView from "./dbitems/ModalityRegionView";
 
-export default class DBView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      albums: [],
-      selectedFile: null,
-      filename: "Upload QIB CSV",
-      albumname: "",
-      family: "",
-      studies: [],
-    };
-  }
-  componentDidMount = async () => {
-    let array = await requests.getAllAlbums();
-    if (array && array.length > 0) {
-      console.log("fetch");
-      console.log(array);
-      this.setState((prevState) => {
-        return { ...this.state, albums: array };
-      });
-    }
-  };
-  onChangeHandler = (event) => {
-    this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0,
-      filename: event.target.files[0].name,
-    });
-  };
-  onClickHandler = () => {
-    let data = new FormData();
-    data.append("file", this.state.selectedFile);
-    data.append("album_name", this.state.album_name);
-    data.append("family", this.state.family);
-    requests.uploadCSV(data);
-  };
-  fetchStudiesByAlbum = async (e) => {
-    let object = await requests.getStudyByAlbum(e);
-    if (object && object.length > 0) {
-      this.setState((prevState) => {
-        return { ...this.state, studies: object };
-      });
-    }
-    console.log(object);
-  };
-  render() {
-    return (
-      <Tab.Container id="left-tabs" defaultActiveKey="first" style={styles.body}>
-        <Row>
-          <Col sm={3} style={styles.sidebar}>
-            <Nav.Link eventKey="album">Album</Nav.Link>
-            <Nav.Link eventKey="patient">Patient</Nav.Link>
-          </Col>
-          <Col sm={9}>
-            <Tab.Content>
-              <Tab.Pane eventKey="album">Hellooooooooo</Tab.Pane>
-              <Tab.Pane eventKey="patient">Hellooooooooo2</Tab.Pane>
+export default function DBView() {
+  return (
+    <Tab.Container id="left-tabs" defaultActiveKey="album" >
+      <Row style={{ margin: 0 }}>
+        <Col sm={2} style={styles.sidebar}>
+        <Nav variant="pills" className="flex-column" style={styles.navigator} >
+          <Nav.Link eventKey="album" style={styles.link}>Album</Nav.Link>
+          <Nav.Link eventKey="patient" style={styles.link}>Patient</Nav.Link>
+           <Nav.Link eventKey="modality_region" style={styles.link}>Modality & Region</Nav.Link>
+          </Nav>
+        </Col>
+        <Col sm={10}>
+          <Scrollbar style={styles.scrollbar}>
+            <Tab.Content style={styles.content}>
+              <Tab.Pane eventKey="album">
+                <AlbumView />
+              </Tab.Pane>
+              <Tab.Pane eventKey="patient"><PatientView/></Tab.Pane>
+              <Tab.Pane eventKey="modality_region"><ModalityRegionView/></Tab.Pane>
             </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
-    );
-  }
+          </Scrollbar>
+        </Col>
+      </Row>
+    </Tab.Container>
+  );
 }
+
 const styles = {
+  body: {
+    // display: "grid",
+    // gridTemplateColumns: "minmax(150px, 25%) 1fr",
+    // padding: 0,
+    // margin: 0,
+  },
   sidebar: {
-    height: "100vh",
+    height: "93vh",
     background: "#434C5E",
     fontSize: "1rem",
-    textAlign: "center"
+    textAlign: "center",
+    borderBottomRightRadius: 30,
   },
+  navigator: {
+    paddingTop: "1rem"
+  },
+  scrollbar: { height: "90vh" },
   content: {
-    padding: "2rem",
+    paddingTop: "1rem",
   },
+  link:{
+    color: "white"
+  }
 };

@@ -6,6 +6,7 @@ import {
   ListGroupItem,
   Button,
   Modal,
+  Spinner 
 } from "react-bootstrap";
 import Scrollbar from "react-scrollbars-custom";
 import UploadCSVForm from "../components/forms/UploadCSVForm";
@@ -15,16 +16,13 @@ import InteractiveQIBTable from "../components/InteractiveQIBTable";
 import { LoadingContext } from "../shared/LoadingContext";
 import { DarkmodeContext } from "../shared/DarkmodeContext";
 import requests from "../utils/requests";
-import mockData from "../utils/mockData";
-import useWindowDimensions from "../utils/useWindowDimensions";
 import { themeDark, themeLight } from "../styles/globalStyles";
 import globalComponents from "../styles/globalComponents";
-import CircularProgress from "@material-ui/core/CircularProgress";
+
 export default function GridView() {
   const { loading, setLoading } = useContext(LoadingContext);
   const { darkmode } = useContext(DarkmodeContext);
   const [loadingQib, setLoadingQib] = useState(false);
-  const { height, width } = useWindowDimensions();
   const [albums, setAlbums] = useState([]);
   const [qibs, setQibs] = useState([]);
   const [qibData, setQibData] = useState(null);
@@ -38,7 +36,6 @@ export default function GridView() {
     if (loading === true) {
       fetchAlbums();
       fetchQIBs();
-      setLoading(false);
     }
   }, [loading]);
 
@@ -56,6 +53,7 @@ export default function GridView() {
     if (array && array.length > 0) {
       setQibs(array);
     }
+    setLoading(false);
   };
   let fetchQIBFeature = async (qib) => {
     setLoadingQib(true);
@@ -172,15 +170,12 @@ export default function GridView() {
               >
                 <span style={{ color: theme.text }}>Loading QIB</span>
                 <div className="mx-2 my-2">
-                  <CircularProgress
-                    style={{ color: theme.text, width: 20, height: 20 }}
-                  />
+                   <Spinner animation="border" style={{ color: theme.text, width: 20, height: 20 }} />
                 </div>
               </div>
             ) : (
               <InteractiveQIBTable
                 data={qibData}
-                height={height}
                 editTag={editTag}
                 outcome={currentQIBLoaded.outcome_column}
               />

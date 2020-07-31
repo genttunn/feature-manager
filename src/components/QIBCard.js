@@ -8,8 +8,8 @@ export default function QIBCard({ qib, fetchQIBFeature, deleteQIB}) {
   const handleCloseEdit = () => {
     setShowEdit(false);
   };
-  const handleShowEdit = (qibID) => {
-    setCurrentQIBEdited(qibID);
+  const handleShowEdit = (qib) => {
+    setCurrentQIBEdited(qib)
     setShowEdit(true);
   };
   return (
@@ -48,7 +48,7 @@ export default function QIBCard({ qib, fetchQIBFeature, deleteQIB}) {
             variant="nord-pink"
             className="btn-sm btn-block "
             style={{ ...styles.boldText, width: 70 }}
-            onClick={() => handleShowEdit(qib.id)}
+            onClick={() => handleShowEdit(qib)}
           >
             Edit
           </Button>
@@ -62,14 +62,14 @@ export default function QIBCard({ qib, fetchQIBFeature, deleteQIB}) {
           </Button>
         </Col>
       </Row>
-      <Modal show={showEdit} onHide={handleCloseEdit}>
+      <Modal centered show={showEdit} onHide={handleCloseEdit}>
         <Modal.Header closeButton>
           <Modal.Title>Edit QIB</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <EditQIBForm
             handleCloseEdit={handleCloseEdit}
-            qibID={currentQIBEdited}
+            qib={currentQIBEdited}
           />
         </Modal.Body>
         <Modal.Footer>

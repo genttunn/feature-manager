@@ -9,7 +9,6 @@ import { Button } from "react-bootstrap";
 import ColumnToggle from "./ColumnToggle";
 export default function InteractiveQIBTable({
   data,
-  height,
   editTag,
   outcome,
 }) {
@@ -203,7 +202,7 @@ export default function InteractiveQIBTable({
         <div
           style={{
             display: "flex",
-            height: height * 0.75,
+            height: "75vh",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
