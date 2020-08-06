@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Navbar, Nav, Image } from "react-bootstrap";
 import { themeLight, themeDark } from "../styles/globalStyles";
 import { DarkmodeContext } from "../shared/DarkmodeContext";

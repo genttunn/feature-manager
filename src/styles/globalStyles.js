@@ -37,10 +37,6 @@ export const themeDark = {
     color: logo,
   },
   loader: textColorDark,
-  table: {
-    backgroundColor: backgroundColorDarkSecondary,
-    color: textColorDark,
-  },
   box: {
     backgroundColor: backgroundColorDarkSecondary,
     color: textColorDark,
@@ -51,6 +47,34 @@ export const themeDark = {
   },
   cardNormal: {
     backgroundColor: backgroundColorDarkSecondary,
+    color: textColorDark,
+  },
+  inputField: {
+    backgroundColor: nordColor.night4,
+    color: textColorDark,
+    borderColor: nordColor.night4,
+  },
+  tableHeader: {
+    backgroundColor: nordColor.night3,
+    color: textColorDark,
+    borderColor: nordColor.night3,
+  },
+  table: {
+    backgroundColor: nordColor.night4,
+    color: textColorDark,
+    borderColor: nordColor.night3,
+  },
+  section: {
+    backgroundColor: backgroundColorDarkPrimary,
+    borderColor: nordColor.snow1,
+    color: textColorDark,
+  },
+  accordionHeader: {
+    backgroundColor: backgroundColorDarkSecondary,
+    color: textColorDark,
+  },
+  accordionBackground: {
+    backgroundColor: nordColor.night3,
     color: textColorDark,
   },
 };
@@ -67,10 +91,6 @@ export const themeLight = {
     color: logo,
   },
   loader: textColorLight,
-  table: {
-    backgroundColor: backgroundColorLightSecondary,
-    color: textColorLight,
-  },
   box: {
     backgroundColor: backgroundColorLightSecondary,
     color: textColorLight,
@@ -82,6 +102,33 @@ export const themeLight = {
   cardNormal: {
     backgroundColor: backgroundColorLightSecondary,
     color: textColorLight,
+  },
+  inputField: {
+    backgroundColor: nordColor.snow1,
+    color: textColorLight,
+    borderColor: nordColor.snow1,
+  },
+  tableHeader: {
+    backgroundColor: nordColor.snow2,
+    color: textColorLight,
+    borderColor: nordColor.snow1,
+  },
+  table: {
+    backgroundColor: nordColor.snow3,
+    color: textColorLight,
+    borderColor: nordColor.snow1,
+  },
+  section: {
+    backgroundColor: backgroundColorLightPrimary,
+    borderColor: nordColor.night4,
+    color: textColorLight,
+  },
+  accordionHeader: {
+    backgroundColor: "#f2f6fc",
+    color: textColorLight,
+  },
+  accordionBackground: {
+    backgroundColor: "#dfe2e8",
   },
 };
 

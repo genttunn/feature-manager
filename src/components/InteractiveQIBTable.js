@@ -1,27 +1,42 @@
 import React, { useState, useEffect, useContext } from "react";
-import MaterialTable, { MTableToolbar, MTableHeader } from "material-table";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import MaterialTable, { MTableToolbar } from "material-table";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import globalComponents from "../styles/globalComponents";
 import { themeDark, themeLight } from "../styles/globalStyles";
 import { DarkmodeContext } from "../shared/DarkmodeContext";
-import { Button } from "react-bootstrap";
-import ColumnToggle from "./ColumnToggle";
+import { Button, Modal } from "react-bootstrap";
+import TagColumnForm from "./forms/TagColumnForm";
 export default function InteractiveQIBTable({
   data,
   editTag,
   outcome,
+  metadata,
 }) {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [exportMode, setExportMode] = useState(true);
   const { darkmode } = useContext(DarkmodeContext);
   const theme = darkmode === true ? themeDark : themeLight;
   useEffect(() => {
     data && formatDataForTable(data);
   }, [data]);
-
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+  let styleHeader = (title) => {
+    if (metadata.split(",").includes(title)) {
+      return { color: theme.frost3 };
+    } else if (title === outcome) {
+      return { color: theme.aurora1 };
+    } else {
+      return null;
+    }
+  };
   let formatDataForTable = (rawData) => {
     const firstRow = rawData[0];
     const metadata = [
@@ -32,44 +47,14 @@ export default function InteractiveQIBTable({
       "Series_region",
     ];
     Object.keys(firstRow).forEach((key, index) => {
-      if (!metadata.includes(key)) {
-        columns.push({
-          title: (
-            <ColumnToggle
-              columnName={key}
-              editTag={editTag}
-              outcome={outcome}
-            />
-          ),
-          field: key,
-          type: "numeric",
-          filtering: false,
-        });
-      } else if (key === "plc_status") {
-        columns.push({
-          title: (
-            <ColumnToggle
-              columnName={key}
-              editTag={editTag}
-              outcome={outcome}
-            />
-          ),
-          field: key,
-          type: "numeric",
-        });
-      } else {
-        columns.push({
-          title: (
-            <ColumnToggle
-              columnName={key}
-              editTag={editTag}
-              outcome={outcome}
-            />
-          ),
-          field: key,
-          filtering: false,
-        });
-      }
+      columns.push({
+        id: index,
+        title: key,
+        field: key,
+        type: metadata.includes(key) && key !== "plc_status" ? null : "numeric",
+        filtering: true,
+        headerStyle: styleHeader(key),
+      });
     });
     setRows(rawData);
   };
@@ -85,25 +70,8 @@ export default function InteractiveQIBTable({
     columnsButton: true,
     showTextRowsSelected: false,
     headerStyle: theme.table,
+    exportFileName: "outcome_" + outcome + "_metadata_" + metadata,
   };
-  //   const tableActions = [
-  //     {
-  //       icon: "delete-forever",
-  //       tooltip: "Remove Row",
-  //       onClick: (event, rowData) =>
-  //         setRows(rows.filter((row) => row !== rowData)),
-  //     },
-  //   ];
-  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  // const theme = React.useMemo(
-  //   () =>
-  //     createMuiTheme({
-  //       palette: {
-  //         type: prefersDarkMode ? 'dark' : 'light',
-  //       },
-  //     }),
-  //   [prefersDarkMode],
-  // );
 
   const muiTheme = createMuiTheme({
     palette: {
@@ -116,13 +84,27 @@ export default function InteractiveQIBTable({
       },
     },
   });
+  const styles = {
+    boldText: {
+      fontWeight: "bold",
+      borderRadius: 20,
+    },
+    blankDiv: {
+      display: "flex",
+      height: "75vh",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
   const components = {
     Toolbar: (props) => (
       <div>
         <MTableToolbar {...props} />
+        <p>{"Outcome: " + outcome + " | Metadata: " + metadata}</p>
         <Button
           variant="nord-orange"
-          style={{ fontWeight: "bold",borderRadius:20 }}
+          style={styles.boldText}
           className="btn mx-2"
           size="sm"
           onClick={() => filterMultipleRows()}
@@ -130,8 +112,17 @@ export default function InteractiveQIBTable({
           Filter selected rows
         </Button>
         <Button
+          variant="nord-yellow"
+          style={styles.boldText}
+          className="btn mx-2"
+          size="sm"
+          onClick={() => handleShowModal()}
+        >
+          Tag columns
+        </Button>
+        <Button
           variant="nord-robin"
-          style={{ fontWeight: "bold",borderRadius:20 }}
+          style={styles.boldText}
           className="btn mx-2"
           size="sm"
           onClick={() => setExportMode(!exportMode)}
@@ -152,8 +143,6 @@ export default function InteractiveQIBTable({
     onRowUpdate: (newData, oldData) =>
       new Promise((resolve, reject) => {
         setTimeout(() => {
-          console.log(oldData);
-          console.log(newData);
           const dataUpdate = [...rows];
           const index = oldData.tableData.id;
           dataUpdate[index] = newData;
@@ -186,11 +175,10 @@ export default function InteractiveQIBTable({
         <MuiThemeProvider theme={muiTheme}>
           <MaterialTable
             style={theme.table}
-            title={"Outcome : " + outcome}
+            title={"Table View"}
             columns={columns}
             data={rows}
             options={tableOptions}
-            // actions={tableActions}
             components={components}
             onSelectionChange={(evt, selectedRow) =>
               chooseRows(evt, selectedRow)
@@ -199,38 +187,33 @@ export default function InteractiveQIBTable({
           />
         </MuiThemeProvider>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            height: "75vh",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div style={styles.blankDiv}>
           <span style={{ color: theme.text }}>Click Load to start</span>
         </div>
       )}
+      <Modal centered show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton style={theme.inputField}>
+          <Modal.Title>Tag columns</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={theme.box}>
+          <TagColumnForm
+            handleCloseModal={handleCloseModal}
+            columns={columns}
+            outcome={outcome}
+            metadata={metadata}
+            editTag={editTag}
+          />
+        </Modal.Body>
+        <Modal.Footer style={theme.inputField}>
+          <Button
+            variant="nord-orange"
+            style={styles.boldText}
+            onClick={handleCloseModal}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </React.Fragment>
   );
 }
-
-//   columns = [
-//     { title: "Name", field: "name" },
-//     { title: "Surname", field: "surname" },
-//     { title: "Birth Year", field: "birthYear", type: "numeric" },
-//     {
-//       title: "Birth Place",
-//       field: "birthCity",
-//       lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
-//     },
-//   ];
-//   let data1 = [
-//     { name: "Mehmet", surname: "Baran", birthYear: 1987, birthCity: 63 },
-//     {
-//       name: "Zerya Betül",
-//       surname: "Baran",
-//       birthYear: 2017,
-//       birthCity: 34,
-//     },
-//   ];

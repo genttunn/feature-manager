@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Chart } from "react-google-charts";
-
-export default function QIBFeatureScatterplot({ width, height, data }) {
+import { DarkmodeContext } from "../../shared/DarkmodeContext";
+import { themeDark, themeLight } from "../../styles/globalStyles";
+export default function QIBFeatureScatterplot({ data }) {
   const [formattedData, setFormattedData] = useState([]);
   const [positiveCount, setPositiveCount] = useState(0);
+  const { darkmode } = useContext(DarkmodeContext);
+  const theme = darkmode === true ? themeDark : themeLight;
   useEffect(() => {
     data && formatDataForPlot(data);
   }, [data]);
@@ -15,7 +18,7 @@ export default function QIBFeatureScatterplot({ width, height, data }) {
     ];
     for (var i = 1; i < rawData.length; i++) {
       let style = null;
-      if (rawData[i][2] == 1) {
+      if (rawData[i][2] === 1) {
         style = "point { shape-type: triangle; fill-color: #a52714; }";
         count += 1;
       }
@@ -30,7 +33,7 @@ export default function QIBFeatureScatterplot({ width, height, data }) {
     <span>
       {data !== null ? (
         <Chart
-          height={height}
+          height="75vh"
           chartType="ScatterChart"
           loader={<div>Loading Chart</div>}
           data={formattedData}
@@ -43,26 +46,12 @@ export default function QIBFeatureScatterplot({ width, height, data }) {
             hAxis: { title: data[0][0] },
             vAxis: { title: data[0][1] },
             legend: "none",
-            backgroundColor:'#ECEFF4'
+            backgroundColor: "#ECEFF4",
           }}
         />
       ) : (
-        <span>Choose QIB to start</span>
+        <span style={{ color: theme.text }}>Choose QIB to start</span>
       )}
     </span>
   );
 }
-
-// let mockData = [
-//   ["original_firstorder_Energy", "original_firstorder_Entropy", "plc_status"],
-//   [26261900000.0, 4.14067, 0],
-//   [2590220000.0, 5.42717, 1],
-//   [5346520000.0, 4.56143, 0],
-//   [5141600000.0, 5.62142, 1],
-//   [3591020000.0, 5.56104, 1],
-//   [19307000000.0, 5.53878, 1],
-//   [16162800000.0, 3.76077, 0],
-//   [12530000000.0, 5.81302, 1],
-//   [5003880000.0, 4.27481, 0],
-//   [4669760000.0, 5.08005, 0],
-// ];

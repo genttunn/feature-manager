@@ -6,7 +6,7 @@ import {
   ListGroupItem,
   Button,
   Modal,
-  Spinner 
+  Spinner,
 } from "react-bootstrap";
 import Scrollbar from "react-scrollbars-custom";
 import UploadCSVForm from "../components/forms/UploadCSVForm";
@@ -71,18 +71,19 @@ export default function GridView() {
     let object = await requests.deleteQIB(qib.id);
     if (object) {
       setLoading(true);
-      console.log("delete ok");
     }
   };
   let saveTags = (updatedQIB) => {
     setLoading(true);
     fetchQIBFeature(updatedQIB);
   };
-  let editTag = async (column, tag) => {
-    if (tag === "outcome") {
-      let updatedQIB = await requests.editOutcome(currentQIBLoaded.id, column);
-      saveTags(updatedQIB);
-    }
+  let editTag = async (outcome, metadata) => {
+    let updatedQIB = await requests.editTag(
+      currentQIBLoaded.id,
+      outcome,
+      metadata
+    );
+    saveTags(updatedQIB);
   };
 
   let setStyleCard = (qib_id) => {
@@ -90,11 +91,46 @@ export default function GridView() {
       ? theme.cardSelected
       : theme.cardNormal;
   };
+
+  const styles = {
+    sectionTitle: { fontWeight: 200, fontSize: 25 },
+    basicRow: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    scrollBar: { height: "75vh" },
+    cardText: {
+      textAlign: "left",
+    },
+    boldText: {
+      fontWeight: "bold",
+      borderRadius: 18,
+    },
+    qibTable: {
+      display: "flex",
+      height: "75vh",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
+
+  const layout = {
+    rowContainer: "m-3",
+    columnLeft: "mx-1",
+    rowFilterButtons: "mx-1 px-1 my-3",
+    listQIBCards: "mx-1",
+    columnRightFull: 9,
+    columnRightSmall: 12,
+    rowUploadButtons: "mx-1 px-1 my-3",
+  };
+
   return (
     <div className="container-fluid">
       {globalComponents}
       <Row className={layout.rowContainer}>
-        <Col className={layout.columnLeft} style={styles.box}>
+        <Col className={layout.columnLeft}>
           <p style={{ ...styles.sectionTitle, color: theme.text }}>
             QIBs: {qibs.length}
           </p>
@@ -105,7 +141,7 @@ export default function GridView() {
               setQibs={setQibs}
             />
           </Row>
-          <Scrollbar style={{ height: "75vh" }}>
+          <Scrollbar style={styles.scrollBar}>
             <ListGroup
               className={layout.listQIBCards}
               lg={12}
@@ -123,54 +159,45 @@ export default function GridView() {
             </ListGroup>
           </Scrollbar>
         </Col>
-        <Col
-          lg={layout.columnRightFull}
-          sm={layout.columnRightSmall}
-          style={styles.box}
-        >
+        <Col lg={layout.columnRightFull} sm={layout.columnRightSmall}>
           <p style={{ ...styles.sectionTitle, color: theme.text }}>QIB Table</p>
           <Row className={layout.rowUploadButtons} style={styles.basicRow}>
             <Col>
               <Button
-                variant="nord-orange"
+                variant="nord-jade"
                 style={styles.boldText}
                 onClick={handleShow}
               >
                 Upload QIB
               </Button>
               <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header closeButton style={theme.inputField}>
                   <Modal.Title>Upload your QIB</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                  <UploadCSVForm handleClose={handleClose} />
+                <Modal.Body style={theme.box}>
+                  <UploadCSVForm handleClose={handleClose} albums={albums} />
                 </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleClose}>
+                <Modal.Footer style={theme.inputField}>
+                  <Button
+                    variant="nord-orange"
+                    style={styles.boldText}
+                    onClick={handleClose}
+                  >
                     Close
                   </Button>
                 </Modal.Footer>
               </Modal>
             </Col>
           </Row>
-          <Scrollbar
-            style={{
-              height: "75vh",
-            }}
-          >
+          <Scrollbar style={styles.scrollBar}>
             {loadingQib === true ? (
-              <div
-                style={{
-                  display: "flex",
-                  height: "75vh",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              <div style={styles.qibTable}>
                 <span style={{ color: theme.text }}>Loading QIB</span>
                 <div className="mx-2 my-2">
-                   <Spinner animation="border" style={{ color: theme.text, width: 20, height: 20 }} />
+                  <Spinner
+                    animation="border"
+                    style={{ color: theme.text, width: 20, height: 20 }}
+                  />
                 </div>
               </div>
             ) : (
@@ -178,6 +205,7 @@ export default function GridView() {
                 data={qibData}
                 editTag={editTag}
                 outcome={currentQIBLoaded.outcome_column}
+                metadata={currentQIBLoaded.metadata_columns}
               />
             )}
           </Scrollbar>
@@ -186,66 +214,3 @@ export default function GridView() {
     </div>
   );
 }
-
-const styles = {
-  box: {
-    // border: 1,
-    // borderStyle: "solid",
-    // borderColor: "green",
-  },
-  sectionTitle: { fontWeight: 200, fontSize: 25 },
-  basicRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  scrollBox: {
-    overflow: "scroll",
-    alignContent: "center",
-  },
-  cardText: {
-    textAlign: "left",
-  },
-  boldText: {
-    fontWeight: "bold",
-    borderRadius: 20,
-  },
-};
-
-const layout = {
-  rowContainer: "m-3",
-  columnLeft: "mx-1",
-  rowFilterButtons: "mx-1 px-1 my-3",
-  listQIBCards: "mx-1",
-  columnRightFull: 9,
-  columnRightSmall: 12,
-  rowUploadButtons: "mx-1 px-1 my-3",
-};
-/* <Form width="100%">
-                <InputGroup>
-                  <InputGroup.Prepend>
-                    <InputGroup.Text
-                      id="inputGroupPrepend"
-                      onClick={() => generateCSV()}
-                      style={{ backgroundColor: "#39a451", color: "white" }}
-                      onMouseOver={(e) =>
-                        (e.target.style.backgroundColor = "#2f8a43")
-                      }
-                      onMouseOut={(e) =>
-                        (e.target.style.backgroundColor = "#39a451")
-                      }
-                    >
-                      Export CSV
-                    </InputGroup.Text>
-                  </InputGroup.Prepend>
-                  <Form.Control
-                    type="text"
-                    placeholder="Click feature to add"
-                    aria-describedby="inputGroupPrepend"
-                    name="features"
-                    value={featureSet}
-                    onChange={(e) => setFeatureSet(e.target.value)}
-                    className="input-large"
-                  />
-                </InputGroup>
-              </Form> */

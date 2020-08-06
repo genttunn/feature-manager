@@ -1,28 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Card, Modal, Row, Col, Container } from "react-bootstrap";
+import { Button, Card, Modal, Col, Container } from "react-bootstrap";
 import requests from "../../utils/requests";
 import { LoadingContext } from "../../shared/LoadingContext";
 import EditModalityRegionForm from "../../components/forms/EditModalityRegionForm";
-
-const card = (
-  <Card
-    style={{
-      alignSelf: "center",
-      backgroundColor: "lightpink",
-      height: "10rem",
-      width: "14rem",
-      borderRadius: 20,
-    }}
-  >
-    <Card.Body>
-      <Card.Title>Hoy</Card.Title>
-      <Card.Text>Yahoo</Card.Text>
-      <Button variant="primary" className="m-1">
-        Edit
-      </Button>
-    </Card.Body>
-  </Card>
-);
+import globalComponents from "../../styles/globalComponents";
+import { DarkmodeContext } from "../../shared/DarkmodeContext";
+import { themeDark, themeLight } from "../../styles/globalStyles";
 
 export default function ModalityRegionView() {
   const { loading, setLoading } = useContext(LoadingContext);
@@ -31,7 +14,8 @@ export default function ModalityRegionView() {
   const [modalMode, setModalMode] = useState("");
   const [currentObjectEdited, setCurrentObjectEdited] = useState(0);
   const [showModal, setShowModal] = useState(false);
-
+  const { darkmode } = useContext(DarkmodeContext);
+  const theme = darkmode === true ? themeDark : themeLight;
   useEffect(() => {
     if (loading === true) {
       fetchModalitiesAndRegions();
@@ -55,29 +39,49 @@ export default function ModalityRegionView() {
     setCurrentObjectEdited(currentObject);
     setShowModal(true);
   };
+
+  const styles = {
+    container: {
+      display: "flex",
+      flexDirection: "row",
+      maxWidth: "83vw",
+      justifyContent: "space-around",
+    },
+    body: {
+      display: "grid",
+      gridGap: "1rem",
+      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+      placeItems: "center",
+    },
+    sectionTitle: { fontWeight: 200, fontSize: 25 },
+    section: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 10,
+      minHeight: "87vh",
+      padding: 15,
+      borderRadius: 20,
+      border: 1,
+      borderStyle: "dashed",
+      ...theme.section,
+    },
+    card: {
+      ...theme.box,
+      placeItems: "center",
+      height: "10rem",
+      width: "15rem",
+      borderRadius: 20,
+    },
+    boldText: {
+      fontWeight: "bold",
+      borderRadius: 18,
+    },
+  };
   return (
-    <Container
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        maxWidth: "83vw",
-        justifyContent: "space-around",
-      }}
-    >
-      <Col
-        lg={6}
-        sm={12}
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ECEFF4",
-          borderRadius: 20,
-          marginRight: 4,
-          minHeight: "87vh",
-          padding: 15,
-        }}
-      >
-        <p style={{ ...styles.sectionTitle }}>Modalities</p>
+    <Container style={styles.container}>
+      {globalComponents}
+      <Col lg={6} sm={12} style={styles.section}>
+        <p style={styles.sectionTitle}>Modalities</p>
         <div style={styles.body}>
           {modalities.map((modality) => (
             <Card style={styles.card} key={modality.id}>
@@ -85,7 +89,8 @@ export default function ModalityRegionView() {
                 <Card.Title>{modality.name}</Card.Title>
                 <Card.Text>{modality.description}</Card.Text>
                 <Button
-                  variant="primary"
+                  variant="nord-pink"
+                  style={styles.boldText}
                   className="m-1"
                   onClick={() => handleShowModal("MODALITY", modality)}
                 >
@@ -96,19 +101,7 @@ export default function ModalityRegionView() {
           ))}
         </div>
       </Col>
-      <Col
-        lg={6}
-        sm={12}
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ECEFF4",
-          borderRadius: 20,
-          marginLeft: 4,
-          minHeight: "87vh",
-          padding: 15,
-        }}
-      >
+      <Col lg={6} sm={12} style={styles.section}>
         <p style={styles.sectionTitle}>Regions</p>
         <div style={styles.body}>
           {regions.map((region) => (
@@ -117,7 +110,8 @@ export default function ModalityRegionView() {
                 <Card.Title>{region.name}</Card.Title>
                 <Card.Text>{region.description}</Card.Text>
                 <Button
-                  variant="primary"
+                  variant="nord-pink"
+                  style={styles.boldText}
                   className="m-1"
                   onClick={() => handleShowModal("REGION", region)}
                 >
@@ -129,20 +123,24 @@ export default function ModalityRegionView() {
         </div>
       </Col>
       <Modal centered show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={theme.inputField}>
           <Modal.Title>
             Edit {modalMode === "MODALITY" ? "modality" : "region"}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={theme.box}>
           <EditModalityRegionForm
             handleCloseEdit={handleCloseModal}
-            object = {currentObjectEdited}
+            object={currentObjectEdited}
             mode={modalMode}
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+        <Modal.Footer style={theme.inputField}>
+          <Button
+            variant="nord-orange"
+            style={styles.boldText}
+            onClick={handleCloseModal}
+          >
             Close
           </Button>
         </Modal.Footer>
@@ -150,64 +148,3 @@ export default function ModalityRegionView() {
     </Container>
   );
 }
-
-const styles = {
-  body: {
-    display: "grid",
-    gridGap: "1rem",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    placeItems: "center",
-  },
-  sectionTitle: { fontWeight: 200, fontSize: 25 },
-  card: {
-    placeItems: "center",
-    backgroundColor: "lightpink",
-    height: "10rem",
-    width: "15rem",
-    borderRadius: 20,
-  },
-};
-
-//  <ListGroup>
-//       <ListGroupItem style={styles.header}>
-//         first_name last_name, birthdate, gender, outcome(plc_status)
-//       </ListGroupItem>
-//       {patients.map((patient) => (
-//         <ListGroupItem key={patient.id}>
-//           <Row>
-//             <Col lg={10} style={styles.columnLeft}>
-//               {patient.first_name} {patient.last_name},{" "}
-//               {new Date(patient.birthdate).toLocaleDateString("en-GB")},{" "}
-//               {patient.gender}, {patient.outcome.plc_status}
-//             </Col>
-//             <Col lg={2}>
-//               <Row style={styles.columnRight}>
-//                 <Button
-//                   className="btn-sm"
-//                   style={{ width: 70 }}
-//                   onClick={() => handleShowEdit(patient)}
-//                 >
-//                   Edit
-//                 </Button>
-//               </Row>
-//             </Col>
-//           </Row>{" "}
-//         </ListGroupItem>
-//       ))}
-//       <Modal centered show={showEdit} onHide={handleCloseEdit}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Edit patient</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//           <EditPatientForm
-//             handleCloseEdit={handleCloseEdit}
-//             patient={currentPatientEdited}
-//           />
-//         </Modal.Body>
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleCloseEdit}>
-//             Close
-//           </Button>
-//         </Modal.Footer>
-//       </Modal>
-//     </ListGroup>

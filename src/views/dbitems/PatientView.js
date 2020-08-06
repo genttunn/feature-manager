@@ -10,15 +10,19 @@ import {
 import requests from "../../utils/requests";
 import { LoadingContext } from "../../shared/LoadingContext";
 import EditPatientForm from "../../components/forms/EditPatientForm";
+import globalComponents from "../../styles/globalComponents";
+import { DarkmodeContext } from "../../shared/DarkmodeContext";
+import { themeDark, themeLight } from "../../styles/globalStyles";
+
 export default function PatientView() {
   const { loading, setLoading } = useContext(LoadingContext);
   const [patients, setPatients] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
   const [currentPatientEdited, setCurrentPatientEdited] = useState(0);
-
+  const { darkmode } = useContext(DarkmodeContext);
+  const theme = darkmode === true ? themeDark : themeLight;
   useEffect(() => {
     if (loading === true) {
-      console.log('load patients')
       fetchPatients();
     }
   }, [loading]);
@@ -28,7 +32,7 @@ export default function PatientView() {
     if (result) {
       setPatients(result);
     }
-     setLoading(false);
+    setLoading(false);
   };
   const handleCloseEdit = () => {
     setShowEdit(false);
@@ -37,68 +41,91 @@ export default function PatientView() {
     setCurrentPatientEdited(patient);
     setShowEdit(true);
   };
+  const styles = {
+    header: {
+      textAlign: "left",
+      fontWeight: "bold",
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
+      ...theme.tableHeader,
+    },
+    tableRow: {
+      ...theme.table,
+    },
+
+    columnLeft: {
+      textAlign: "left",
+    },
+    columnRight: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      paddingRight: "1rem",
+    },
+    boldText: {
+      fontWeight: "bold",
+      borderRadius: 18,
+    },
+  };
+
   return (
-    <ListGroup>
-      <ListGroupItem style={styles.header}>
-        first_name last_name, birthdate, gender, outcome(plc_status)
-      </ListGroupItem>
-      {patients.map((patient) => (
-        <ListGroupItem key={patient.id} style={{backgroundColor: "#ECEFF4",}}>
-          <Row>
-            <Col lg={10} style={styles.columnLeft}>
-              {patient.first_name} {patient.last_name},{" "}
-              {new Date(patient.birthdate).toLocaleDateString("en-GB")}
-              , {patient.gender}, {patient.outcome.plc_status}
-            </Col>
-            <Col lg={2}>
-              <Row style={styles.columnRight}>
-                <Button
-                  className="btn-sm"
-                  style={{ width: 70 }}
-                  onClick={() => handleShowEdit(patient)}
-                >
-                  Edit
-                </Button>
-              </Row>
-            </Col>
-          </Row>{" "}
+    <Col
+      lg={12}
+      sm={12}
+      style={{ justifyContent: "center" }}
+      className="px-lg-5 px-sm-1 pt-lg-2 pt-sm-1"
+    >
+      {globalComponents}
+      <ListGroup>
+        <ListGroupItem style={styles.header}>
+          first_name last_name, birthdate, gender, outcome(plc_status)
         </ListGroupItem>
-      ))}
-      <Modal centered show={showEdit} onHide={handleCloseEdit}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit patient</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <EditPatientForm
-            handleCloseEdit={handleCloseEdit}
-            patient={currentPatientEdited}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseEdit}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </ListGroup>
+        {patients.map((patient) => (
+          <ListGroupItem key={patient.id} style={styles.tableRow}>
+            <Row>
+              <Col lg={10} style={styles.columnLeft}>
+                {patient.first_name} {patient.last_name},{" "}
+                {new Date(patient.birthdate).toLocaleDateString("en-GB")},{" "}
+                {patient.gender}, 
+                {patient.outcome !== null && patient.outcome.plc_status}
+              </Col>
+              <Col lg={2}>
+                <Row style={styles.columnRight}>
+                  <Button
+                    variant="nord-pink"
+                    className="btn-sm"
+                    style={styles.boldText}
+                    onClick={() => handleShowEdit(patient)}
+                  >
+                    Edit
+                  </Button>
+                </Row>
+              </Col>
+            </Row>{" "}
+          </ListGroupItem>
+        ))}
+        <Modal centered show={showEdit} onHide={handleCloseEdit}>
+          <Modal.Header closeButton style={theme.inputField}>
+            <Modal.Title>Edit patient</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={theme.box}>
+            <EditPatientForm
+              handleCloseEdit={handleCloseEdit}
+              patient={currentPatientEdited}
+            />
+          </Modal.Body>
+          <Modal.Footer style={theme.inputField}>
+            <Button
+              variant="nord-orange"
+              style={styles.boldText}
+              onClick={handleCloseEdit}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </ListGroup>
+    </Col>
   );
 }
-
-const styles = {
-  header: {
-    textAlign: "left",
-    fontWeight: "bold",
-    backgroundColor: "#ECEFF4",
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-  },
-  columnLeft: {
-    textAlign: "left",
-  },
-  columnRight: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-};
