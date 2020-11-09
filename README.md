@@ -1,3 +1,6 @@
+
+# feature-manager
+
 React frontend to consume REST api for QIB collections.
 
 ## Repos
@@ -19,8 +22,8 @@ mysql_db = *****<br />
 mysql_password = *****<br />
 connection_string = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format(mysql_user,mysql_password,mysql_host,mysql_db)<br />
 <br />
-Open a terminal at python-rest-api/ andtype pipenv shellto activate pipenvshell<br />
-Type pythonto enterPython console there<br />
+Open a terminal at python-rest-api/ and type pipenv shell to activate pipenvshell <br />
+Type pythonto enter yython console there <br />
 Type  the  following  commands  one  by  one  to  create the  data  model  in  database  and  insert some basic metadata:<br />
 from feature_manager import db<br />
 db.create_all()<br />
@@ -30,5 +33,3 @@ quick_start()<br />
 <br />
 Quit Python console and start the back-end application with python app.py<br />
 Open a terminal in the front-end application (feature-manager), type npm to install dependencies, then npm start to start the React application. The app is now empty because there are no QIB uploaded yet. These files can be found in python-rest-api/csv/. *Note: upload the qib collections file first before uploading list_patient_outcome.csv
-
-
