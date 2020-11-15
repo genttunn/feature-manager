@@ -1,7 +1,7 @@
 
 # feature-manager
 
-React frontend to consume REST api for QIB collections.
+React frontend to consume REST api for QIB collections. See user manual in /userguide.
 
 ## Repos
 
